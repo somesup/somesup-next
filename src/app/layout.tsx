@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 
+const notoSansKR = localFont({
+  src: "../../public/fonts/NotoSansKR.ttf",
+  variable: "--noto-sans-kr",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Some's up | 썸즈 업",
@@ -14,11 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body
-        className="antialiased"
-      >
-        {children}
-      </body>
+      <body className={`${notoSansKR.className} antialiased`}>{children}</body>
     </html>
   );
 }
