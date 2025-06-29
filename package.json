@@ -11,6 +11,7 @@
     "format:check": "prettier --check \"./src/app/**/*\""
   },
   "dependencies": {
+    "motion": "^12.19.2",
     "next": "14.2.30",
     "react": "^18",
     "react-dom": "^18"
