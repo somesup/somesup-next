@@ -29,7 +29,7 @@ const config: Config = {
         /* 대제목 - Black 28pt / Line height : 22 */
         '.typography-main-title': {
           'font-size': '1.75rem' /* 28px */,
-          'line-height': '1.375rem' /* 22px */,
+          'line-height': '1.75rem' /* 22px */,
           'font-weight': '900',
           'letter-spacing': '-0.5px',
         },
