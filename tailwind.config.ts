@@ -1,19 +1,82 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: '#171717',
+        gray: {
+          '10': '#171717',
+          '20': '#3d3d3d',
+          '30': '#5d5d5d',
+          '40': '#888888',
+          '50': '#fafafa',
+        },
+        error: '#FF7A7C',
+        semantic: '#FF3F62',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        /* 대제목 - Black 28pt / Line height : 22 */
+        '.typography-main-title': {
+          'font-size': '1.75rem' /* 28px */,
+          'line-height': '2rem' /* 32px */,
+          'font-weight': '900',
+          'letter-spacing': '-0.5px',
+        },
+        /* 중제목 - Regular 20pt / Line height : 31px */
+        '.typography-sub-title': {
+          'font-size': '1.25rem' /* 20px */,
+          'line-height': '1.9375rem' /* 31px */,
+          'font-weight': '400',
+          'letter-spacing': '-0.5px',
+        },
+        /* 중제목 - Bold 20pt / Line height : 31px */
+        '.typography-sub-title-bold': {
+          'font-size': '1.25rem' /* 20px */,
+          'line-height': '1.9375rem' /* 31px */,
+          'font-weight': '700',
+          'letter-spacing': '-0.5px',
+        },
+        /* 소제목 - Medium 18pt / Line height : 29px */
+        '.typography-small-title': {
+          'font-size': '1.125rem' /* 18px */,
+          'line-height': '1.8125rem' /* 29px */,
+          'font-weight': '500',
+          'letter-spacing': '-0.5px',
+        },
+        /* 버튼텍스트, 뉴스상세보기 - Medium 16pt / Line height : 32px */
+        '.typography-body1': {
+          'font-size': '1rem' /* 16px */,
+          'line-height': '2rem' /* 32px */,
+          'font-weight': '500',
+          'letter-spacing': '-0.5px',
+        },
+        /* 뉴스요약보기, 알림창context - Regular 14pt / Line height : 28px */
+        '.typography-body2': {
+          'font-size': '0.875rem' /* 14px */,
+          'line-height': '1.75rem' /* 28px */,
+          'font-weight': '400',
+          'letter-spacing': '-0.5px',
+        },
+        /* 주석, 경고문구 - Regular 12pt / Line height : 29px */
+        '.typography-caption': {
+          'font-size': '0.75rem' /* 12px */,
+          'line-height': '1.8125rem' /* 29px */,
+          'font-weight': '400',
+          'letter-spacing': '-0.5px',
+        },
+      });
+    }),
+  ],
 };
 export default config;
