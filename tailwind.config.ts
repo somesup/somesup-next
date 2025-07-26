@@ -9,6 +9,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      spacing: {
+        mobile: '480px',
+      },
       colors: {
         background: '#171717',
         gray: {
@@ -16,7 +19,8 @@ const config: Config = {
           '20': '#3d3d3d',
           '30': '#5d5d5d',
           '40': '#888888',
-          '50': '#fafafa',
+          '50': '#c4c4c4',
+          '60': '#fafafa',
         },
         error: '#FF7A7C',
         semantic: '#FF3F62',
