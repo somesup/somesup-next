@@ -1,9 +1,8 @@
 import { Metadata } from 'next';
-
+import Image from 'next/image';
 import OnboardingStartButton from '@/components/features/onboarding/onboarding-start-button';
 import OnboardingCarousel from '@/components/features/onboarding/onboarding-carousel';
 import { onboardingImages } from '@/data/onboarding';
-import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: '온보딩 페이지 | 썹즈 업',
@@ -11,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 const OnboardingPage = () => (
-  <div className="relative">
+  <main className="relative">
     <div className="flex h-screen flex-col items-center justify-center gap-16 pb-32 lg:pb-[15%]">
       <OnboardingCarousel gap={20}>
         {onboardingImages.map(image => (
@@ -25,7 +24,7 @@ const OnboardingPage = () => (
       </p>
     </div>
     <OnboardingStartButton />
-  </div>
+  </main>
 );
 
 export default OnboardingPage;
