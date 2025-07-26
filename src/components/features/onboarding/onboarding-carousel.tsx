@@ -13,7 +13,7 @@ type OnboardingCarouselProps = {
 const OnboardingCarousel = ({
   children,
   gap = 0,
-  itemsPerView = 1.5,
+  itemsPerView = 1.8,
   autoPlayInterval = 1500,
   className = '',
 }: OnboardingCarouselProps) => {

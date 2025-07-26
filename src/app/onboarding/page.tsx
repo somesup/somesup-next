@@ -6,13 +6,13 @@ import { onboardingImages } from '@/data/onboarding';
 import Image from 'next/image';
 
 export const metadata: Metadata = {
-  title: '로그인 페이지 | 썹즈 업',
+  title: '온보딩 페이지 | 썹즈 업',
   description: '...', // TODO: 생각하기
 };
 
 const OnboardingPage = () => (
-  <>
-    <div className="flex h-screen flex-col items-center justify-center gap-16 pb-[10%]">
+  <div className="relative">
+    <div className="flex h-screen flex-col items-center justify-center gap-16 pb-32 lg:pb-[15%]">
       <OnboardingCarousel gap={20}>
         {onboardingImages.map(image => (
           <Image key={image.id} className="rounded-lg" src={image.url} alt="Some's up" width={310} height={440} />
@@ -25,7 +25,7 @@ const OnboardingPage = () => (
       </p>
     </div>
     <OnboardingStartButton />
-  </>
+  </div>
 );
 
 export default OnboardingPage;
