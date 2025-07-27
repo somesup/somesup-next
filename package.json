@@ -11,10 +11,13 @@
     "format:check": "prettier --check \"./src/app/**/*\""
   },
   "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "motion": "^12.19.2",
     "next": "14.2.30",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -22,6 +25,7 @@
     "@types/react-dom": "^18",
     "postcss": "^8",
     "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.13",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
