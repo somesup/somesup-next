@@ -12,6 +12,12 @@ const config: Config = {
       spacing: {
         mobile: '480px',
       },
+      height: {
+        screen: '100dvh',
+      },
+      maxHeight: {
+        screen: '100dvh',
+      },
       colors: {
         background: '#171717',
         gray: {
