@@ -15,7 +15,7 @@ const pages: Page[] = [
   { href: '/mypage', label: '마이페이지' },
 ];
 
-export default function PageSelector() {
+const PageSelector = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -82,4 +82,6 @@ export default function PageSelector() {
       </div>
     </div>
   );
-}
+};
+
+export default PageSelector;
