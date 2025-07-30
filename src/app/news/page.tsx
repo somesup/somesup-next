@@ -1,6 +1,6 @@
 import PageSelector from '@/components/ui/page-selector';
 
-const HomePage = () => {
+const NewsPage = () => {
   return (
     <div>
       <PageSelector />
@@ -8,4 +8,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default NewsPage;
