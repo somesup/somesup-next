@@ -1,11 +1,5 @@
-import PageSelector from '@/components/ui/page-selector';
-
 const HomePage = () => {
-  return (
-    <div>
-      <PageSelector />
-    </div>
-  );
+  return <div>home</div>;
 };
 
 export default HomePage;
