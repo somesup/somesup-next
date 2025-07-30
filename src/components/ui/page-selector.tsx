@@ -3,6 +3,7 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdFiberManualRecord } from 'rea
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 type Page = { href: string; label: string };
 
@@ -20,7 +21,7 @@ export default function PageSelector() {
   const otherPages = pages.filter(p => p.href !== currentPage.href);
 
   return (
-    <div className="relative w-full text-center">
+    <div className="absolute z-[9999]">
       <div className="relative inline-block">
         <button
           onClick={() => setIsOpen(o => !o)}
@@ -28,11 +29,11 @@ export default function PageSelector() {
         >
           <span className="relative inline-block flex h-[29px] w-[89px] items-center justify-center">
             <MdFiberManualRecord
-              className={[
+              className={cn(
                 'absolute left-[-15px] top-1/2 -translate-y-1/2',
                 'transition-opacity duration-300 ease-in-out',
                 isOpen ? 'opacity-0' : 'opacity-100',
-              ].join(' ')}
+              )}
               color="#FF3F62"
               size={12}
             />
@@ -45,15 +46,18 @@ export default function PageSelector() {
         </button>
 
         <div
-          className={`absolute left-0 top-full flex w-[89px] flex-col items-center space-y-2 transition-opacity duration-300 ${
-            isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
-          } `}
+          className={cn(
+            'absolute left-0 top-full flex w-[89px] flex-col items-center space-y-2 transition-opacity duration-300',
+            isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
+          )}
         >
           {otherPages.map(({ href, label }) => (
             <Link
               key={href}
               href={href}
-              className="relative mb-[27px] mt-[27px] flex h-[29px] w-full items-center justify-center whitespace-nowrap typography-small-title"
+              className={cn(
+                'relative mb-[27px] mt-[27px] flex h-[29px] w-full items-center justify-center whitespace-nowrap typography-small-title',
+              )}
             >
               {label === '5분 뉴스' && (
                 <MdFiberManualRecord
