@@ -9,6 +9,7 @@ type User = Expand<{ user: UserDto } & TokenDto>;
 type UserStore = {
   setUser: (user: User) => void;
   resetUser: () => void;
+  setTokens: (tokens: TokenDto) => void;
 } & User;
 
 const initialUser: User = {
@@ -23,6 +24,7 @@ const useUserStore = create<UserStore>()(
       ...initialUser,
       setUser: user => set(() => user),
       resetUser: () => set(() => initialUser),
+      setTokens: tokens => set(user => ({ ...user, ...tokens })),
     })),
     {
       name: 'user',
