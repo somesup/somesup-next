@@ -14,7 +14,7 @@ export const ToastContainer = () => {
   const toasts = useToastStore(state => state.toasts);
 
   return (
-    <div className="fixed bottom-0 left-1/2 z-50 flex w-full -translate-x-1/2 flex-col gap-4 p-4 sm:left-auto sm:right-0 sm:top-auto sm:w-[360px] sm:translate-x-0">
+    <div className="fixed left-1/2 top-0 z-50 flex w-full -translate-x-1/2 flex-col gap-2 p-4 sm:bottom-0 sm:left-auto sm:right-0 sm:top-auto sm:w-[360px] sm:translate-x-0">
       {toasts.map(toast => (
         <ToastItem key={toast.id} {...toast} />
       ))}
