@@ -46,14 +46,14 @@ const config: Config = {
         /* 중제목 - Regular 20pt / Line height : 31px */
         '.typography-sub-title': {
           'font-size': '1.25rem' /* 20px */,
-          'line-height': '1.9375rem' /* 31px */,
+          'line-height': '2rem' /* 32px */,
           'font-weight': '400',
           'letter-spacing': '-0.5px',
         },
         /* 중제목 - Bold 20pt / Line height : 31px */
         '.typography-sub-title-bold': {
           'font-size': '1.25rem' /* 20px */,
-          'line-height': '1.9375rem' /* 31px */,
+          'line-height': '2rem' /* 32px */,
           'font-weight': '700',
           'letter-spacing': '-0.5px',
         },
@@ -78,10 +78,23 @@ const config: Config = {
           'font-weight': '400',
           'letter-spacing': '-0.5px',
         },
+        '.typography-body3': {
+          'font-size': '0.875rem' /* 14px */,
+          'line-height': '1.375rem' /* 22px */,
+          'font-weight': '500',
+          'letter-spacing': '-0.5px',
+        },
         /* 주석, 경고문구 - Regular 12pt / Line height : 29px */
         '.typography-caption': {
           'font-size': '0.75rem' /* 12px */,
-          'line-height': '1.8125rem' /* 29px */,
+          'line-height': '1.5rem' /* 24px */,
+          'font-weight': '400',
+          'letter-spacing': '-0.5px',
+        },
+        /* toast description */
+        '.typography-caption2': {
+          'font-size': '0.75rem' /* 12px */,
+          'line-height': '1.25rem' /* 20px */,
           'font-weight': '400',
           'letter-spacing': '-0.5px',
         },
