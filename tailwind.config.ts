@@ -87,7 +87,7 @@ const config: Config = {
         /* 주석, 경고문구 - Regular 12pt / Line height : 29px */
         '.typography-caption': {
           'font-size': '0.75rem' /* 12px */,
-          'line-height': '1.5rem' /* 24px */,
+          'line-height': '1.813rem' /* 29px */,
           'font-weight': '400',
           'letter-spacing': '-0.5px',
         },
