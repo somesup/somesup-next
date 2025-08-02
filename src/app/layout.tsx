@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { ToastContainer } from '@/components/ui/toast';
 import './globals.css';
 
 const notoSansKR = localFont({
@@ -20,8 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={`${notoSansKR.className} antialiased`}>
+      <body className={`${notoSansKR.className} relative antialiased`}>
         <div className="mx-auto max-h-screen max-w-mobile">{children}</div>
+        <ToastContainer />
       </body>
     </html>
   );
