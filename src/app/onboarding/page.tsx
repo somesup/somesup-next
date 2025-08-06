@@ -5,8 +5,8 @@ import OnboardingCarousel from '@/components/features/onboarding/onboarding-caro
 import { onboardingImages } from '@/data/onboarding';
 
 export const metadata: Metadata = {
-  title: '온보딩 페이지 | 썹즈 업',
-  description: '...', // TODO: 생각하기
+  title: '온보딩 페이지 | 썸즈 업',
+  description: "some's up의 온보딩 페이지입니다! 이제 쉽고 빠른 뉴스를 여러분의 손 안에서 만나보세요",
 };
 
 const OnboardingPage = () => (
