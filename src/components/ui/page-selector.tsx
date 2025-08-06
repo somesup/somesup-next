@@ -28,16 +28,18 @@ const PageSelector = () => {
             onClick={() => setIsOpen(prev => !prev)}
             className="relative flex items-center typography-small-title"
           >
-            <MdFiberManualRecord size={12} color="#FF3F62" className="absolute -left-5 top-1/2 -translate-y-1/2" />
+            {!isOpen && (
+              <MdFiberManualRecord size={12} color="#FF3F62" className="absolute -left-5 top-1/2 -translate-y-1/2" />
+            )}
             <span>{currentPage.label}</span>
             {isOpen ? (
-              <MdKeyboardArrowUp size={22} className="ml-0.5" />
+              <MdKeyboardArrowUp size={22} className="absolute -right-6 top-1/2 -translate-y-1/2" />
             ) : (
-              <MdKeyboardArrowDown size={22} className="ml-0.5" />
+              <MdKeyboardArrowDown size={22} className="absolute -right-6 top-1/2 -translate-y-1/2" />
             )}
           </button>
           {isOpen && (
-            <div className="absolute left-11 top-full mt-6 flex -translate-x-1/2 flex-col items-center gap-6">
+            <div className="absolute left-1/2 top-full mt-6 flex -translate-x-1/2 flex-col items-center gap-6">
               {otherPages.map(({ href, label }) => (
                 <Link
                   key={href}
