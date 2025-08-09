@@ -93,7 +93,7 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
         };
       }
 
-      return { error: null, data: retryResult };
+      return { error: null, data: retryResult.data };
     }
 
     const result = await response.json();
@@ -105,7 +105,7 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
       };
     }
 
-    return { error: null, data: result };
+    return { error: null, data: result.data };
   } catch (error) {
     console.error(error);
     return {
