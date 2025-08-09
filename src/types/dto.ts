@@ -1,3 +1,5 @@
+import { SectionType } from './types';
+
 export type Error = { status: number; message: string };
 export type APIResult<T> = { error: Error; data: null } | { error: null; data: T };
 
@@ -7,4 +9,18 @@ export type PhoneVerifyDto = PhoneRequestDto & { code: string };
 export type UserDto = { id: number; phone: string; nickname: string };
 export type TokenDto = { accessToken: string; refreshToken: string };
 
-export type SignInResponseDto = { user: UserDto; tokens: TokenDto; isCreated: boolean };
+export type SectionPreferenceDto = {
+  userId: number;
+  sectionId: number;
+  sectionName: SectionType;
+  preference: number;
+};
+
+export type SignInResponseDto = {
+  user: UserDto;
+  tokens: TokenDto;
+  sectionPreferences: SectionPreferenceDto[];
+  isCreated: boolean;
+};
+
+export type SectionPreferenceRequestDto = Pick<SectionPreferenceDto, 'sectionId' | 'preference'>[];
