@@ -6,13 +6,15 @@ import { immer } from 'zustand/middleware/immer';
 
 type User = Expand<{ user: UserDto; sectionPreferences: SectionPreference } & TokenDto>;
 
-type UserStore = {
-  setUser: (user: User) => void;
-  resetUser: () => void;
-  setPreferences: (sectionPreferences: SectionPreference) => void;
-  setPreference: (section: SectionType, preference: number) => void;
-  setTokens: (tokens: TokenDto) => void;
-} & User;
+type UserStore = Expand<
+  {
+    setUser: (user: User) => void;
+    resetUser: () => void;
+    setPreferences: (sectionPreferences: SectionPreference) => void;
+    setPreference: (section: SectionType, preference: number) => void;
+    setTokens: (tokens: TokenDto) => void;
+  } & User
+>;
 
 const initialUser: User = {
   user: { id: -1, phone: '01000000000', nickname: '' },

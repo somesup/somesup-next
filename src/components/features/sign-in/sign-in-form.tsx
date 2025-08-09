@@ -10,6 +10,7 @@ import { toast } from '@/components/ui/toast';
 import { useUserStore } from '@/lib/stores/user';
 import { MdOutlineArrowForwardIos } from 'react-icons/md';
 import SignInInputCode from './sign-in-input-code';
+import { SectionType } from '@/types/types';
 
 const SignInForm = () => {
   const [formValue, setFormValue] = useState<PhoneVerifyDto>({ phoneNumber: '', code: '' });
@@ -47,7 +48,12 @@ const SignInForm = () => {
   const handleClickSignIn = async () => {
     const { error, data } = await authPhoneVerify(formValue);
     if (!error) {
-      setUser({ user: data.user, ...data.tokens });
+      const sectionPreferences = data.sectionPreferences.reduce((acc, c) => {
+        acc.set(c.sectionName, c.preference);
+        return acc;
+      }, new Map()) as unknown as Record<SectionType, number>;
+
+      setUser({ user: data.user, sectionPreferences, ...data.tokens });
       if (data.isCreated) return router.push('/set-nickname');
       else return router.push('/');
     }

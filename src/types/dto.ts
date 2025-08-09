@@ -1,4 +1,4 @@
-import { SectionType } from './types';
+import { Expand, SectionType } from './types';
 
 export type Error = { status: number; message: string };
 export type APIResult<T> = { error: Error; data: null } | { error: null; data: T };
@@ -16,11 +16,11 @@ export type SectionPreferenceDto = {
   preference: number;
 };
 
-export type SignInResponseDto = {
+export type SignInResponseDto = Expand<{
   user: UserDto;
   tokens: TokenDto;
   sectionPreferences: SectionPreferenceDto[];
   isCreated: boolean;
-};
+}>;
 
 export type SectionPreferenceRequestDto = Pick<SectionPreferenceDto, 'sectionId' | 'preference'>[];
