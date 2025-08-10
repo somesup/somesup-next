@@ -1,15 +1,18 @@
-import { TokenDto, UserDto } from '@/types/dto';
-import { Expand, SectionPreference, SectionType } from '@/types/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { useSESStore } from '@/lib/hooks/useSESStore';
 
-type User = Expand<{ user: UserDto; sectionPreferences: SectionPreference } & TokenDto>;
+import { TokenDto, UserDto } from '@/types/dto';
+import { Expand, SectionPreference, SectionType } from '@/types/types';
 
-type UserStore = Expand<
+export type User = Expand<{ user: UserDto; sectionPreferences: SectionPreference } & TokenDto>;
+
+export type UserStore = Expand<
   {
     setUser: (user: User) => void;
     resetUser: () => void;
+    setNickname: (nickname: string) => void;
     setPreferences: (sectionPreferences: SectionPreference) => void;
     setPreference: (section: SectionType, preference: number) => void;
     setTokens: (tokens: TokenDto) => void;
@@ -23,15 +26,16 @@ const initialUser: User = {
   refreshToken: '',
 };
 
-const useUserStore = create<UserStore>()(
+export const useUserStore = create<UserStore>()(
   persist(
     immer(set => ({
       ...initialUser,
       setUser: user => set(() => user),
       resetUser: () => set(() => initialUser),
-      setTokens: tokens => set(user => Object.assign(user, tokens)),
-      setPreferences: sectionPreferences => set(user => (user.sectionPreferences = sectionPreferences)),
-      setPreference: (section, preference) => set(user => (user.sectionPreferences[section] = preference)),
+      setNickname: nickname => set(state => void (state.user.nickname = nickname)),
+      setPreferences: sectionPreferences => set(state => void (state.sectionPreferences = sectionPreferences)),
+      setPreference: (section, preference) => set(state => void (state.sectionPreferences[section] = preference)),
+      setTokens: tokens => set(state => Object.assign(state, tokens)),
     })),
     {
       name: 'user',
@@ -39,4 +43,4 @@ const useUserStore = create<UserStore>()(
   ),
 );
 
-export { useUserStore, type User };
+export const useUserSESStore = <T>(selector: (state: UserStore) => T) => useSESStore(useUserStore, selector);
