@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SignInInput from '@/components/features/sign-in/sign-in-input';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ const SetNicknamePage = () => {
   const updateNickname = useUserStore(state => state.setNickname);
   const [nickname, setNickname] = useState(initialNickname);
   const [isInitialSetup, setIsInitialSetup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
   const handleConfirm = async (e: FormEvent<HTMLFormElement>) => {
@@ -26,6 +27,14 @@ const SetNicknamePage = () => {
     toast.serverError();
   };
 
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (errorMessage) setErrorMessage('');
+    const nickname = e.target.value;
+    if (nickname.length <= 0) setErrorMessage('닉네임을 입력해주세요');
+    if (nickname.length > 15) setErrorMessage('닉네임은 15자까지 입력할 수 있어요');
+    setNickname(nickname);
+  };
+
   useEffect(() => {
     setIsInitialSetup(document.referrer === '/sign-in');
   }, []);
@@ -37,14 +46,9 @@ const SetNicknamePage = () => {
         <label className="sr-only" htmlFor="nickname">
           전화번호 입력
         </label>
-        <SignInInput
-          type="text"
-          id="nickname"
-          placeholder="닉네임"
-          value={nickname}
-          onChange={e => setNickname(e.target.value)}
-        />
-        <Button type="submit" className="absolute bottom-4 left-0">
+        <SignInInput type="text" id="nickname" placeholder="닉네임" value={nickname} onChange={handleInputChange} />
+        {errorMessage && <p className="w-full pl-1 text-error typography-caption">{errorMessage}</p>}
+        <Button type="submit" className="absolute bottom-4 left-0" disabled={!!errorMessage}>
           확인
         </Button>
       </form>
