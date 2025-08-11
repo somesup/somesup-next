@@ -5,15 +5,16 @@ import { Button } from '@/components/ui/button';
 import SignInInput from './sign-in-input';
 import { useRouter } from 'next/navigation';
 import { authPhoneRequest, authPhoneVerify } from '@/lib/apis/apis';
-import { PhoneVerifyDto } from '@/types/dto';
+import { SignInRequestDto } from '@/types/dto';
 import { toast } from '@/components/ui/toast';
 import { useUserStore } from '@/lib/stores/user';
 import { MdOutlineArrowForwardIos } from 'react-icons/md';
 import SignInInputCode from './sign-in-input-code';
+import { SectionType } from '@/types/types';
 
 const SignInForm = () => {
-  const [formValue, setFormValue] = useState<PhoneVerifyDto>({ phoneNumber: '', code: '' });
-  const [step, setStep] = useState<keyof PhoneVerifyDto>('phoneNumber');
+  const [formValue, setFormValue] = useState<SignInRequestDto>({ phoneNumber: '', code: '' });
+  const [step, setStep] = useState<keyof SignInRequestDto>('phoneNumber');
   const [errorMessage, setErrorMessage] = useState('');
   const [inputCodeKey, setInputCodeKey] = useState(crypto.randomUUID());
   const setUser = useUserStore(state => state.setUser);
@@ -47,7 +48,12 @@ const SignInForm = () => {
   const handleClickSignIn = async () => {
     const { error, data } = await authPhoneVerify(formValue);
     if (!error) {
-      setUser({ user: data.user, ...data.tokens });
+      const preferences = data.sectionPreferences.reduce((acc, c) => {
+        acc.set(c.sectionName, c.preference);
+        return acc;
+      }, new Map()) as unknown as Record<SectionType, number>;
+
+      setUser({ user: data.user, preferences, ...data.tokens });
       if (data.isCreated) return router.push('/set-nickname');
       else return router.push('/');
     }
