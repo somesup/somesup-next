@@ -33,7 +33,7 @@ const refreshAccessToken = async (): Promise<string> => {
     const result = await response.json();
 
     setTokens(result.data);
-    return result.accessToken;
+    return result.data.accessToken;
   } catch (error) {
     console.error(error);
     return '';
