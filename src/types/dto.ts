@@ -6,6 +6,7 @@ export type APIResult<T> = { error: Error; data: null } | { error: null; data: T
 export type PhoneRequestDto = { phoneNumber: string };
 export type SignInRequestDto = PhoneRequestDto & { code: string };
 export type UpdateUserRequestDto = Pick<UserDto, 'nickname'>;
+export type UpdatePreferencesRequestDto = Pick<SectionPreferenceDto, 'sectionId' | 'preference'>[];
 
 export type UserDto = { id: number; phone: string; nickname: string };
 export type TokenDto = { accessToken: string; refreshToken: string };

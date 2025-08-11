@@ -1,4 +1,11 @@
-import { APIResult, PhoneRequestDto, SignInRequestDto, SignInResponseDto, UpdateUserRequestDto } from '@/types/dto';
+import {
+  APIResult,
+  PhoneRequestDto,
+  SignInRequestDto,
+  SignInResponseDto,
+  UpdatePreferencesRequestDto,
+  UpdateUserRequestDto,
+} from '@/types/dto';
 import api from './api-config';
 
 export const authPhoneRequest = async ({ phoneNumber }: PhoneRequestDto): Promise<APIResult<null>> => {
@@ -16,4 +23,8 @@ export async function authPhoneVerify({ phoneNumber, code }: SignInRequestDto): 
 
 export async function authUpdateUser({ nickname }: UpdateUserRequestDto): Promise<APIResult<null>> {
   return api.patch('/users', { nickname });
+}
+
+export async function authUpdatePreferences(preferences: UpdatePreferencesRequestDto) {
+  return api.patch('/users/section-preferences', preferences);
 }
