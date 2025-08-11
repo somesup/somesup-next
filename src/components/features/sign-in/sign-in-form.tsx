@@ -48,12 +48,12 @@ const SignInForm = () => {
   const handleClickSignIn = async () => {
     const { error, data } = await authPhoneVerify(formValue);
     if (!error) {
-      const sectionPreferences = data.sectionPreferences.reduce((acc, c) => {
+      const preferences = data.sectionPreferences.reduce((acc, c) => {
         acc.set(c.sectionName, c.preference);
         return acc;
       }, new Map()) as unknown as Record<SectionType, number>;
 
-      setUser({ user: data.user, sectionPreferences, ...data.tokens });
+      setUser({ user: data.user, preferences, ...data.tokens });
       if (data.isCreated) return router.push('/set-nickname');
       else return router.push('/');
     }

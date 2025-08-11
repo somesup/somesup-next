@@ -5,15 +5,16 @@ import { useSESStore } from '@/lib/hooks/useSESStore';
 
 import { TokenDto, UserDto } from '@/types/dto';
 import { Expand, SectionPreference, SectionType } from '@/types/types';
+import { useSyncExternalStore } from 'react';
 
-export type User = Expand<{ user: UserDto; sectionPreferences: SectionPreference } & TokenDto>;
+export type User = Expand<{ user: UserDto; preferences: SectionPreference } & TokenDto>;
 
 export type UserStore = Expand<
   {
     setUser: (user: User) => void;
     resetUser: () => void;
     setNickname: (nickname: string) => void;
-    setPreferences: (sectionPreferences: SectionPreference) => void;
+    setPreferences: (preferences: SectionPreference) => void;
     setPreference: (section: SectionType, preference: number) => void;
     setTokens: (tokens: TokenDto) => void;
   } & User
@@ -21,7 +22,7 @@ export type UserStore = Expand<
 
 const initialUser: User = {
   user: { id: -1, phone: '01000000000', nickname: '' },
-  sectionPreferences: { politics: 1, economy: 1, society: 1, culture: 1, tech: 1, world: 1 },
+  preferences: { politics: 1, economy: 1, society: 1, culture: 1, tech: 1, world: 1 },
   accessToken: '',
   refreshToken: '',
 };
@@ -33,8 +34,8 @@ export const useUserStore = create<UserStore>()(
       setUser: user => set(() => user),
       resetUser: () => set(() => initialUser),
       setNickname: nickname => set(state => void (state.user.nickname = nickname)),
-      setPreferences: sectionPreferences => set(state => void (state.sectionPreferences = sectionPreferences)),
-      setPreference: (section, preference) => set(state => void (state.sectionPreferences[section] = preference)),
+      setPreferences: sectionPreferences => set(state => void (state.preferences = sectionPreferences)),
+      setPreference: (section, preference) => set(state => void (state.preferences[section] = preference)),
       setTokens: tokens => set(state => Object.assign(state, tokens)),
     })),
     {
