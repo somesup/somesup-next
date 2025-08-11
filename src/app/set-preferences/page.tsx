@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { MdKeyboardArrowLeft } from 'react-icons/md';
 import SetPreferenceFirstPage from '@/components/features/set-preference/set-preference-first-page';
@@ -15,12 +15,7 @@ import SetPreferenceWaitPage from '@/components/features/set-preference/set-pref
 
 const SetPreferencesPage = () => {
   const [step, setStep] = useState<'first' | 'detail' | 'finish' | 'wait'>('first');
-  const [isInitialSetup, setIsInitialSetup] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    setIsInitialSetup(document.referrer === '/set-nickname');
-  }, []);
 
   const handlePreferenceDone = async () => {
     setStep('wait');
@@ -41,10 +36,7 @@ const SetPreferencesPage = () => {
       {step !== 'wait' && (
         <header className="px-8 pt-6">
           <div className="relative">
-            <button
-              onClick={() => router.push(isInitialSetup ? '/set-nickname' : '/mypage')}
-              className="absolute left-0 top-1/2 -translate-y-1/2"
-            >
+            <button onClick={() => router.back()} className="absolute left-0 top-1/2 -translate-y-1/2">
               <MdKeyboardArrowLeft size={29} />
             </button>
             <h2 className="text-center typography-small-title">맞춤 설정</h2>
