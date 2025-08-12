@@ -7,8 +7,10 @@ import NewsAbstractView from './news-abstract-view';
 import { useNewsDrag } from '@/lib/hooks/useNewsDrag';
 import { NewsDto } from '@/types/dto';
 import { postArticleEvent } from '@/lib/apis/apis';
+import PageSelector from '@/components/ui/page-selector';
 
-const NewsCard = (news: NewsDto) => {
+type NewsCardProps = { news: NewsDto; active: boolean };
+const NewsCard = ({ news, active }: NewsCardProps) => {
   const [isSent, setIsSent] = useState(false);
   const { currentView, isDragging, containerRef, handlers, getProgress } = useNewsDrag();
 
@@ -42,6 +44,7 @@ const NewsCard = (news: NewsDto) => {
         {...handlers}
       >
         <div className="absolute inset-0" style={{ opacity }}>
+          {active && <PageSelector />}
           <NewsAbstractView {...news} />
         </div>
         <div
