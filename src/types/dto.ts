@@ -18,6 +18,7 @@ export type SectionPreferenceDto = {
   sectionName: SectionType;
   preference: number;
 };
+export type SectionPreferenceRequestDto = Pick<SectionPreferenceDto, 'sectionId' | 'preference'>[];
 
 export type SignInResponseDto = Expand<{
   user: UserDto;
@@ -26,4 +27,14 @@ export type SignInResponseDto = Expand<{
   isCreated: boolean;
 }>;
 
-export type SectionPreferenceRequestDto = Pick<SectionPreferenceDto, 'sectionId' | 'preference'>[];
+export type NewsDto = {
+  id: number;
+  sectionId: number;
+  createdAt: string;
+  fullSummary: string;
+  language: string;
+  oneLineSummary: string;
+  region: null | string;
+  thumbnailUrl: string;
+  title: string;
+};

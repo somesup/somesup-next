@@ -28,3 +28,7 @@ export async function authUpdateUser({ nickname }: UpdateUserRequestDto): Promis
 export async function authUpdatePreferences(preferences: UpdatePreferencesRequestDto) {
   return api.patch('/users/section-preferences', preferences);
 }
+
+export async function getArticles(params: { limit: number; cursor?: string }) {
+  return api.get('/articles', params);
+}
