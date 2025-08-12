@@ -30,3 +30,14 @@ export const sectionNames = Object.values(SECTIONS).reduce((acc, { id, name }) =
   acc[id - 1] = name;
   return acc;
 }, Array(6).fill('')) as SectionNameType[];
+
+// snake_case -> camelCase
+export type SnakeToCamel<S extends string> = S extends `${infer P}_${infer C}${infer R}`
+  ? `${Lowercase<P>}${Uppercase<C>}${SnakeToCamel<R>}`
+  : Lowercase<S>;
+export type CamelCaseObject<T> =
+  T extends Array<infer U>
+    ? Array<CamelCaseObject<U>>
+    : T extends object
+      ? { [K in keyof T as SnakeToCamel<K & string>]: CamelCaseObject<T[K]> }
+      : T;
