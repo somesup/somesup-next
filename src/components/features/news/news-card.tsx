@@ -1,17 +1,25 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
 import NewsDetailView from './news-detail-view';
 import NewsAbstractView from './news-abstract-view';
 import { useNewsDrag } from '@/lib/hooks/useNewsDrag';
 import { NewsDto } from '@/types/dto';
+import { postArticleEvent } from '@/lib/apis/apis';
 
 const NewsCard = (news: NewsDto) => {
-  const { isDragging, containerRef, handlers, getProgress } = useNewsDrag();
+  const [isSent, setIsSent] = useState(false);
+  const { currentView, isDragging, containerRef, handlers, getProgress } = useNewsDrag();
 
   const progress = getProgress();
-  const detailTranslateX = (1 - progress) * (containerRef.current?.offsetWidth || 0);
+  const detailTranslateX = (1 - progress) * (containerRef.current?.offsetWidth || window.innerWidth);
   const opacity = 1 - progress;
+
+  if (currentView === 'detail' && !isSent) {
+    postArticleEvent(news.id, 'DETAIL_VIEW');
+    setIsSent(true);
+  }
 
   return (
     <div className="relative h-screen w-full touch-pan-y select-none overflow-hidden overscroll-none">
