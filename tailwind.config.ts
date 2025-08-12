@@ -98,6 +98,13 @@ const config: Config = {
           'font-weight': '400',
           'letter-spacing': '-0.5px',
         },
+        /* 원본 기사 보기 */
+        '.typography-caption3': {
+          'font-size': '0.625rem' /* 10px */,
+          'line-height': '1.813rem' /* 29px */,
+          'font-weight': '400',
+          'letter-spacing': '-0.5px',
+        },
       });
     }),
   ],
