@@ -1,11 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 type PressItem = { id: number; image: string; url: string; name: string };
-type PressTrayInFrameProps = { items?: PressItem[] };
+type PressTrayProps = { items?: PressItem[] };
 
 {
   /*확대되기 전 로고 사이즈입니다*/
@@ -16,11 +16,19 @@ const COLLAPSED_SIZE = 28;
 }
 const EXPANDED_SIZE = 75;
 
-export default function PressTrayInFrame({ items = [] }: PressTrayInFrameProps) {
+const PressTray = ({ items = [] }: PressTrayProps) => {
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const list = useMemo(() => (Array.isArray(items) ? items : []), [items]);
   const top3 = list.slice(0, 3);
   const rest = list.slice(3);
+
+  const close = () => {
+    if (scrollerRef.current) {
+      scrollerRef.current.scrollLeft = 0;
+    }
+    setOpen(false);
+  };
 
   return (
     <>
@@ -51,7 +59,7 @@ export default function PressTrayInFrame({ items = [] }: PressTrayInFrameProps) 
           <>
             <motion.div
               className="absolute inset-0 z-50"
-              onClick={() => setOpen(false)}
+              onClick={close}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -79,6 +87,7 @@ export default function PressTrayInFrame({ items = [] }: PressTrayInFrameProps) 
 
               <div
                 className="flex gap-3 overflow-x-auto px-1 py-1"
+                ref={scrollerRef}
                 style={{
                   WebkitOverflowScrolling: 'touch',
                   scrollbarWidth: 'none',
@@ -115,7 +124,7 @@ export default function PressTrayInFrame({ items = [] }: PressTrayInFrameProps) 
       </AnimatePresence>
     </>
   );
-}
+};
 
 function LogoBubble({
   item,
@@ -162,3 +171,5 @@ function LogoLink({ item, size = EXPANDED_SIZE, layoutId }: { item: PressItem; s
     </a>
   );
 }
+
+export default PressTray;
