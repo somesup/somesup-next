@@ -29,12 +29,16 @@ export type SignInResponseDto = Expand<{
 
 export type NewsDto = {
   id: number;
-  sectionId: number;
-  createdAt: string;
+  section: { id: number; name: string; friendlyName: string };
+  providers: { id: number; name: string; friendlyName: string; logoUrl: string }[];
+  keywords: { id: number; name: string }[];
+  title: string;
+  oneLineSummary: string;
   fullSummary: string;
   language: string;
-  oneLineSummary: string;
   region: null | string;
   thumbnailUrl: string;
-  title: string;
+  createdAt: string;
+  like: { isLiked: boolean; count: number };
+  scrap: { isScrapped: boolean; count: number };
 };
