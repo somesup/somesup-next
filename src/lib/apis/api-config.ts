@@ -147,5 +147,12 @@ const api = {
       body: data ? JSON.stringify(data) : undefined,
       ...options,
     }),
+
+  delete: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
+    myFetch<T>(endpoint, {
+      method: 'DELETE',
+      body: data ? JSON.stringify(data) : undefined,
+      ...options,
+    }),
 };
 export default api;
