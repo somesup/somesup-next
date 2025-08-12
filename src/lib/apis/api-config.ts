@@ -1,5 +1,6 @@
 import { APIResult } from '@/types/dto';
 import { useUserStore } from '../stores/user';
+import { camelize } from '../utils/camelize';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -93,7 +94,7 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
         };
       }
 
-      return { error: null, data: retryResult.data };
+      return { error: null, data: camelize(retryResult.data), pagination: retryResult.pagination };
     }
 
     const result = await response.json();
@@ -105,7 +106,7 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
       };
     }
 
-    return { error: null, data: result.data };
+    return { error: null, data: camelize(result.data), pagination: result.pagination };
   } catch (error) {
     console.error(error);
     return {
@@ -119,7 +120,19 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
 };
 
 const api = {
-  get: <T = any>(endpoint: string, options?: RequestInit) => myFetch<T>(endpoint, { method: 'GET', ...options }),
+  get: <T = any>(endpoint: string, params?: Record<string, any>, options?: RequestInit) => {
+    let url = endpoint;
+
+    if (params) {
+      const searchParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => !!value && searchParams.append(key, String(value)));
+
+      const queryString = searchParams.toString();
+      if (queryString) url += (url.includes('?') ? '&' : '?') + queryString;
+    }
+
+    return myFetch<T>(url, { method: 'GET', ...options });
+  },
 
   post: <T = any>(endpoint: string, data?: any, options?: RequestInit) =>
     myFetch<T>(endpoint, {

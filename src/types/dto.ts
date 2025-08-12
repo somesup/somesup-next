@@ -1,7 +1,8 @@
 import { Expand, SectionType } from './types';
 
 export type Error = { status: number; message: string };
-export type APIResult<T> = { error: Error; data: null } | { error: null; data: T };
+export type PaginationDto = { hasNext: boolean; nextCursor: string; type: 'cursor' };
+export type APIResult<T> = { error: Error; data: null } | { error: null; data: T; pagination?: PaginationDto };
 
 export type PhoneRequestDto = { phoneNumber: string };
 export type SignInRequestDto = PhoneRequestDto & { code: string };
