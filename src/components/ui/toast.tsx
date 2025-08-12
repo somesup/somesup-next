@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
@@ -31,16 +32,16 @@ export const ToastItem = ({ title, description, type }: Toast) => {
 
   if (type === 'promo') {
     return (
-      <button
-        onClick={() => router.push('/news')}
+      <Link
+        href="/news"
         className="flex w-full items-start gap-3 rounded-xl bg-white p-3 text-left shadow-lg ring-1 ring-black/10"
       >
         <div className="relative flex shrink-0 items-center justify-center rounded-md">{toastIcon[type]}</div>
         <div className="text-gray-10">
-          <p className="typography-body1">{title}</p>
-          <span className="typography-body2">{description}</span>
+          <p className="typography-body1">5분만에 뉴스 훑기</p>
+          <span className="typography-body2">오늘이 지나기 전에, 오늘 뉴스 받아보세요!</span>
         </div>
-      </button>
+      </Link>
     );
   }
   return (

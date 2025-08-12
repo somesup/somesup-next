@@ -1,21 +1,19 @@
-function TODAY() {
+export const getTodayString = () => {
   return new Date().toISOString().slice(0, 10);
-}
+};
 
 const KEY = 'news5min:last-visit';
 
-function isDailyUnread() {
+export const isDailyUnread = () => {
   try {
-    return localStorage.getItem(KEY) !== TODAY();
+    return localStorage.getItem(KEY) !== getTodayString();
   } catch {
     return false;
   }
-}
+};
 
-function markDailyRead() {
+export const markDailyRead = () => {
   try {
-    localStorage.setItem(KEY, TODAY());
+    localStorage.setItem(KEY, getTodayString());
   } catch {}
-}
-
-export { TODAY, isDailyUnread, markDailyRead };
+};
