@@ -49,3 +49,7 @@ export async function postArticleScrap(id: number): Promise<APIResult<null>> {
 export async function deleteArticleScrap(id: number): Promise<APIResult<null>> {
   return api.delete(`/articles/${id}/scrap`);
 }
+
+export async function postArticleEvent(id: number, eventType: 'VIEW' | 'DETAIL_VIEW'): Promise<APIResult<null>> {
+  return api.post(`/articles/${id}/view-events`, { eventType });
+}
