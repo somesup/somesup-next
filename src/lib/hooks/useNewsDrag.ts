@@ -103,6 +103,7 @@ export const useNewsDrag = () => {
   };
 
   return {
+    currentView,
     isDragging,
     containerRef,
     isClient,
