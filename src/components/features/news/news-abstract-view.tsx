@@ -5,6 +5,7 @@ import { GoHeartFill } from 'react-icons/go';
 import { GoHeart } from 'react-icons/go';
 import { deleteArticleLike, deleteArticleScrap, postArticleLike, postArticleScrap } from '@/lib/apis/apis';
 import { NewsDto } from '@/types/dto';
+import PageSelector from '@/components/ui/page-selector';
 
 type NewsAbstractViewProps = Pick<NewsDto, 'id' | 'title' | 'oneLineSummary' | 'section' | 'like' | 'scrap'>;
 
@@ -53,6 +54,7 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
 
   return (
     <section className="relative h-full w-full flex-shrink-0 overflow-hidden transition-opacity duration-300">
+      <PageSelector />
       <div className="absolute bottom-0 px-8 pb-10">
         <div className="flex gap-4">
           <div>
