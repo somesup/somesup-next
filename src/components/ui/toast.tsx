@@ -1,5 +1,9 @@
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
+
+import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { MdError } from 'react-icons/md';
 import { Toast, useToastStore } from '@/lib/stores/toast';
@@ -8,6 +12,7 @@ const toastIcon: Record<Toast['type'], ReactNode> = {
   success: <MdError />,
   error: <MdError className="h-7 w-7 text-error" />,
   info: <MdError />,
+  promo: <Image alt="news-paper.png" src="/images/news-paper.png" width={50} height={50} />,
 };
 
 export const ToastContainer = () => {
@@ -23,6 +28,22 @@ export const ToastContainer = () => {
 };
 
 export const ToastItem = ({ title, description, type }: Toast) => {
+  const router = useRouter();
+
+  if (type === 'promo') {
+    return (
+      <Link
+        href="/news"
+        className="flex w-full items-start gap-3 rounded-xl bg-white p-3 text-left shadow-lg ring-1 ring-black/10"
+      >
+        <div className="relative flex shrink-0 items-center justify-center rounded-md">{toastIcon[type]}</div>
+        <div className="text-gray-10">
+          <p className="typography-body1">{title}</p>
+          <span className="typography-body2">{description}</span>
+        </div>
+      </Link>
+    );
+  }
   return (
     <div className="flex h-[4rem] w-full items-center gap-5 rounded-lg bg-gray-20 px-4">
       {toastIcon[type]}
@@ -37,12 +58,14 @@ export const ToastItem = ({ title, description, type }: Toast) => {
 const createToast = (type: Toast['type']) => (title: string, description: string) => {
   const id = crypto.randomUUID();
   useToastStore.getState().add({ type, title, description, id });
-  setTimeout(() => useToastStore.getState().remove(id), 3000);
+  setTimeout(() => useToastStore.getState().remove(id), type === 'promo' ? 8000 : 3000);
 };
 
 export const toast = {
   success: createToast('success'),
   info: createToast('info'),
   error: createToast('error'),
+  promo: createToast('promo'),
+  fiveNews: () => createToast('promo')('5분만에 뉴스 훑기', '오늘이 지나기 전에, 오늘 뉴스 받아보세요!'),
   serverError: () => createToast('error')('서버에 문제가 발생했습니다.', '잠시후 다시 시도해주세요'),
 };
