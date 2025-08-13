@@ -30,7 +30,7 @@ const HomePage = () => {
       setIsLoading(true);
       const prevLength = newsList.length;
 
-      const result = await getArticles(2, pagination?.nextCursor);
+      const result = await getArticles(15, pagination?.nextCursor);
       if (result.error) return console.error('Failed to fetch articles:', result.error);
 
       const data = result.data.map(d => ({ ...mockNews, ...d }));
@@ -65,7 +65,7 @@ const HomePage = () => {
 
       setCurrentIndex(newIndex);
 
-      if (newIndex >= newsList.length && pagination?.hasNext && !isLoading) fetchNews();
+      if (newIndex >= newsList.length - 5 && pagination?.hasNext && !isLoading) fetchNews();
     }, 100);
   }, [currentIndex, newsList.length, pagination?.hasNext, fetchNews, isLoading]);
 
