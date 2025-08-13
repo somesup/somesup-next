@@ -38,8 +38,8 @@ export const ToastItem = ({ title, description, type }: Toast) => {
       >
         <div className="relative flex shrink-0 items-center justify-center rounded-md">{toastIcon[type]}</div>
         <div className="text-gray-10">
-          <p className="typography-body1">5분만에 뉴스 훑기</p>
-          <span className="typography-body2">오늘이 지나기 전에, 오늘 뉴스 받아보세요!</span>
+          <p className="typography-body1">{title}</p>
+          <span className="typography-body2">{description}</span>
         </div>
       </Link>
     );
@@ -66,5 +66,6 @@ export const toast = {
   info: createToast('info'),
   error: createToast('error'),
   promo: createToast('promo'),
+  fiveNews: () => createToast('promo')('5분만에 뉴스 훑기', '오늘이 지나기 전에, 오늘 뉴스 받아보세요!'),
   serverError: () => createToast('error')('서버에 문제가 발생했습니다.', '잠시후 다시 시도해주세요'),
 };
