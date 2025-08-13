@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NewsDetailView from './news-detail-view';
 import NewsAbstractView from './news-abstract-view';
 import { useNewsDrag } from '@/lib/hooks/useNewsDrag';
@@ -9,8 +9,13 @@ import { NewsDto } from '@/types/dto';
 import { postArticleEvent } from '@/lib/apis/apis';
 import PageSelector from '@/components/ui/page-selector';
 
-type NewsCardProps = { news: NewsDto; active: boolean };
-const NewsCard = ({ news, active }: NewsCardProps) => {
+type NewsCardProps = {
+  news: NewsDto;
+  active: boolean;
+  onViewChange: (view: 'abstract' | 'detail') => void;
+};
+
+const NewsCard = ({ news, active, onViewChange }: NewsCardProps) => {
   const [isSent, setIsSent] = useState(false);
   const { currentView, isDragging, containerRef, handlers, getProgress } = useNewsDrag();
 
@@ -22,6 +27,10 @@ const NewsCard = ({ news, active }: NewsCardProps) => {
     postArticleEvent(news.id, 'DETAIL_VIEW');
     setIsSent(true);
   }
+
+  useEffect(() => {
+    onViewChange(currentView);
+  }, [currentView]);
 
   return (
     <div className="relative h-screen w-full touch-pan-y select-none overflow-hidden overscroll-none">
@@ -40,7 +49,9 @@ const NewsCard = ({ news, active }: NewsCardProps) => {
       <div
         ref={containerRef}
         className="relative h-full cursor-grab touch-pan-x overscroll-x-none active:cursor-grabbing"
-        style={{ touchAction: 'pan-x' }}
+        style={{
+          touchAction: currentView === 'detail' ? 'pan-y' : 'pan-x',
+        }}
         {...handlers}
       >
         <div className="absolute inset-0" style={{ opacity }}>
