@@ -16,16 +16,21 @@ type NewsCardProps = {
 };
 
 const NewsCard = ({ news, active, onViewChange }: NewsCardProps) => {
-  const [isSent, setIsSent] = useState(false);
+  const [isSent, setIsSent] = useState({ view: false, detail: false });
   const { currentView, isDragging, containerRef, handlers, getProgress } = useNewsDrag();
 
   const progress = getProgress();
   const detailTranslateX = (1 - progress) * (containerRef.current?.offsetWidth || window.innerWidth);
   const opacity = 1 - progress;
 
-  if (currentView === 'detail' && !isSent) {
+  if (currentView === 'detail' && !isSent.detail) {
     postArticleEvent(news.id, 'DETAIL_VIEW');
-    setIsSent(true);
+    setIsSent(prev => ({ ...prev, detail: true }));
+  }
+
+  if (active && !isSent.view) {
+    postArticleEvent(news.id, 'DETAIL_VIEW');
+    setIsSent(prev => ({ ...prev, view: true }));
   }
 
   useEffect(() => {
