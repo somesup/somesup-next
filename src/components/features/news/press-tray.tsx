@@ -3,17 +3,14 @@
 import Image from 'next/image';
 import { useMemo, useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { PressItemDto } from '@/types/dto';
 
-type PressItem = { id: number; image: string; url: string; name: string };
-type PressTrayProps = { items?: PressItem[] };
+type PressTrayProps = { items: PressItemDto[] };
+type LogoProps = { item: PressItemDto; size: number; layoutId?: string };
 
-{
-  /*확대되기 전 로고 사이즈입니다*/
-}
+/*확대되기 전 로고 사이즈입니다*/
 const COLLAPSED_SIZE = 28;
-{
-  /*확대된 후의 로고 사이즈입니다*/
-}
+/*확대된 후의 로고 사이즈입니다*/
 const EXPANDED_SIZE = 75;
 
 const PressTray = ({ items = [] }: PressTrayProps) => {
@@ -42,14 +39,7 @@ const PressTray = ({ items = [] }: PressTrayProps) => {
       >
         <div className="flex -space-x-3">
           {top3.map(it => (
-            <LogoBubble
-              key={it.id}
-              item={it}
-              size={COLLAPSED_SIZE}
-              layoutId={`logo-${it.id}`}
-              ring={false}
-              shadow={false}
-            />
+            <LogoBubble key={it.id} item={it} size={COLLAPSED_SIZE} layoutId={`logo-${it.id}`} />
           ))}
         </div>
       </motion.button>
@@ -126,19 +116,7 @@ const PressTray = ({ items = [] }: PressTrayProps) => {
   );
 };
 
-function LogoBubble({
-  item,
-  size = 40,
-  layoutId,
-  ring = true,
-  shadow = true,
-}: {
-  item: PressItem;
-  size?: number;
-  layoutId?: string;
-  ring?: boolean;
-  shadow?: boolean;
-}) {
+const LogoBubble = ({ item, size, layoutId }: LogoProps) => {
   return (
     <motion.span
       layoutId={layoutId}
@@ -146,22 +124,25 @@ function LogoBubble({
       style={{
         width: size,
         height: size,
-        borderWidth: ring ? 1 : 0,
-        borderColor: 'rgba(0,0,0,0.12)',
-        boxShadow: shadow ? '0 2px 10px rgba(0,0,0,0.25)' : 'none',
       }}
       transition={{ type: 'spring', stiffness: 520, damping: 38 }}
     >
-      <Image src={item.image} alt={item.name} width={size} height={size} className="h-full w-full object-cover" />
+      <Image
+        src={item.image}
+        alt={item.friendlyName}
+        width={size}
+        height={size}
+        className="h-full w-full object-cover"
+      />
     </motion.span>
   );
-}
+};
 
-function LogoLink({ item, size = EXPANDED_SIZE, layoutId }: { item: PressItem; size?: number; layoutId?: string }) {
+const LogoLink = ({ item, size, layoutId }: LogoProps) => {
   const tileWidth = size + 4;
   return (
     <a
-      href={item.url}
+      href={item.logoUrl}
       target="_blank"
       rel="noopener noreferrer"
       className="group flex shrink-0 flex-col items-center gap-1"
@@ -170,6 +151,6 @@ function LogoLink({ item, size = EXPANDED_SIZE, layoutId }: { item: PressItem; s
       <LogoBubble item={item} size={size} layoutId={layoutId} />
     </a>
   );
-}
+};
 
 export default PressTray;
