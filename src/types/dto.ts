@@ -27,6 +27,10 @@ export type SignInResponseDto = Expand<{
   isCreated: boolean;
 }>;
 
+
+
+export type NewsProviderDto = { id: number; image: string; friendlyName: string; logoUrl: string };
+
 export type NewsDto = {
   id: number;
   section: { id: number; name: string; friendlyName: string };
@@ -42,3 +46,4 @@ export type NewsDto = {
   like: { isLiked: boolean; count: number };
   scrap: { isScrapped: boolean; count: number };
 };
+
