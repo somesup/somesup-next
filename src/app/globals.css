@@ -5,10 +5,12 @@
 html {
   background: #171717;
   color: #fafafa;
+  overscroll-behavior: none;
 }
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  overscroll-behavior: none;
 }
 
 * {
@@ -19,4 +21,19 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+* {
+  scrollbar-width: none; /* Firefox */
+  scrollbar-color: transparent transparent; /* Mozilla Firefox - 추가 설정 */
+  -ms-overflow-style: none; /* Internet Explorer and Edge Legacy */
+  -webkit-scrollbar-width: none; /* Old versions of WebKit */
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+*::-o-scrollbar {
+  display: none;
 }
