@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import { useMemo, useState, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { PressItemDto } from '@/types/dto';
+import { NewsProviderDto } from '@/types/dto';
 
-type PressTrayProps = { items: PressItemDto[] };
-type LogoProps = { item: PressItemDto; size: number; layoutId?: string };
+type PressTrayProps = { items: NewsProviderDto[] };
+type LogoProps = { item: NewsProviderDto; size: number; layoutId?: string };
 
 /*확대되기 전 로고 사이즈입니다*/
 const COLLAPSED_SIZE = 28;

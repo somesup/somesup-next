@@ -1,6 +1,6 @@
-import { PressItemDto } from './types/dto';
+import { NewsProviderDto } from './types/dto';
 
-export const pressData: PressItemDto[] = [
+export const pressData: NewsProviderDto[] = [
   { id: 1, image: '/images/press-logo-example.png', logoUrl: 'https://news.daum.net/', friendlyName: '뉴스사 1' },
   { id: 2, image: '/images/press-logo-example.png', logoUrl: 'https://news.daum.net/', friendlyName: '뉴스사 2' },
   { id: 3, image: '/images/press-logo-example.png', logoUrl: 'https://news.daum.net/', friendlyName: '뉴스사 3' },

@@ -27,4 +27,4 @@ export type SignInResponseDto = Expand<{
 
 export type SectionPreferenceRequestDto = Pick<SectionPreferenceDto, 'sectionId' | 'preference'>[];
 
-export type PressItemDto = { id: number; image: string; friendlyName: string; logoUrl: string };
+export type NewsProviderDto = { id: number; image: string; friendlyName: string; logoUrl: string };
