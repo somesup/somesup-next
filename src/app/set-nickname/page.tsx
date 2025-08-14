@@ -36,7 +36,7 @@ const SetNicknamePage = () => {
   };
 
   useEffect(() => {
-    setIsInitialSetup(document.referrer === '/sign-in');
+    setIsInitialSetup(document.referrer.split('/').at(-1) === 'sign-in');
   }, []);
 
   return (

@@ -1,3 +1,5 @@
+'use client';
+
 import { useSyncExternalStore } from 'react';
 import { StoreApi, UseBoundStore } from 'zustand';
 

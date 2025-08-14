@@ -1,7 +1,8 @@
 import { Expand, SectionType } from './types';
 
 export type Error = { status: number; message: string };
-export type APIResult<T> = { error: Error; data: null } | { error: null; data: T };
+export type PaginationDto = { hasNext: boolean; nextCursor: string; type: 'cursor' };
+export type APIResult<T> = { error: Error; data: null } | { error: null; data: T; pagination?: PaginationDto };
 
 export type PhoneRequestDto = { phoneNumber: string };
 export type SignInRequestDto = PhoneRequestDto & { code: string };
@@ -17,6 +18,7 @@ export type SectionPreferenceDto = {
   sectionName: SectionType;
   preference: number;
 };
+export type SectionPreferenceRequestDto = Pick<SectionPreferenceDto, 'sectionId' | 'preference'>[];
 
 export type SignInResponseDto = Expand<{
   user: UserDto;
@@ -25,6 +27,23 @@ export type SignInResponseDto = Expand<{
   isCreated: boolean;
 }>;
 
-export type SectionPreferenceRequestDto = Pick<SectionPreferenceDto, 'sectionId' | 'preference'>[];
+
 
 export type NewsProviderDto = { id: number; image: string; friendlyName: string; logoUrl: string };
+
+export type NewsDto = {
+  id: number;
+  section: { id: number; name: string; friendlyName: string };
+  providers: { id: number; name: string; friendlyName: string; logoUrl: string }[];
+  keywords: { id: number; name: string }[];
+  title: string;
+  oneLineSummary: string;
+  fullSummary: string;
+  language: string;
+  region: null | string;
+  thumbnailUrl: string;
+  createdAt: string;
+  like: { isLiked: boolean; count: number };
+  scrap: { isScrapped: boolean; count: number };
+};
+

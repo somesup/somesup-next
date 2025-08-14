@@ -3,9 +3,9 @@ import { immer } from 'zustand/middleware/immer';
 
 type Toast = {
   id: string;
-  type: 'error' | 'info' | 'success';
+  type: 'error' | 'info' | 'success' | 'promo';
   title: string;
-  description: string;
+  description?: string;
 };
 
 interface ToastStore {
