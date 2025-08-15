@@ -11,7 +11,7 @@ type NewsAbstractViewProps = Pick<NewsDto, 'id' | 'title' | 'oneLineSummary' | '
 const NewsAbstractView = (news: NewsAbstractViewProps) => {
   const [isLiked, setIsLiked] = useState(news.like.isLiked);
   const [likeCount, setLikeCount] = useState(news.like.count);
-  const [isScrapped, setIsScrapped] = useState(news.scrap.isScrapped);
+  const [isScraped, setIsScrapped] = useState(news.scrap.isScraped);
 
   const handleToggleLike = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -40,7 +40,7 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (isScrapped) {
+    if (isScraped) {
       setIsScrapped(false);
       const { error } = await deleteArticleScrap(news.id);
       if (error) setIsScrapped(true);
@@ -67,7 +67,7 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
               <span className="!leading-3 typography-caption">{likeCount}</span>
             </button>
             <button className="touch-manipulation" onClick={handleToggleScrap}>
-              {isScrapped ? <GoBookmarkFill color="#FAFAFA" size="30" /> : <GoBookmark size="30" />}
+              {isScraped ? <GoBookmarkFill color="#FAFAFA" size="30" /> : <GoBookmark size="30" />}
             </button>
           </div>
         </div>

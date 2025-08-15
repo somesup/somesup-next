@@ -47,7 +47,7 @@ export type NewsDto = {
   thumbnailUrl: string;
   createdAt: string;
   like: { isLiked: boolean; count: number };
-  scrap: { isScrapped: boolean; count: number };
+  scrap: { isScraped: boolean; count: number };
 };
 
 export type ArticlesRequestDto = {
