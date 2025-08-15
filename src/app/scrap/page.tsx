@@ -6,8 +6,11 @@ import NewsCard from '@/components/features/news/news-card';
 import { getArticles } from '@/lib/apis/apis';
 import { NewsDto, PaginationDto } from '@/types/dto';
 import { MdKeyboardArrowLeft } from 'react-icons/md';
+import { useSearchParams } from 'next/navigation';
 
 const ScrapListPage = () => {
+  const searchParams = useSearchParams();
+
   const [newsList, setNewsList] = useState<NewsDto[]>([]);
   const [pagination, setPagination] = useState<PaginationDto | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -29,7 +32,7 @@ const ScrapListPage = () => {
       setIsLoading(true);
       const prevLength = newsList.length;
 
-      const result = await getArticles({ cursor: pagination?.nextCursor || '', scrapped: true });
+      const result = await getArticles({ cursor: pagination?.nextCursor || '', scraped: true });
       if (result.error) return console.error('Failed to fetch articles:', result.error);
 
       setNewsList(prev => [...prev, ...result.data]);
@@ -79,6 +82,11 @@ const ScrapListPage = () => {
   }, [handleScroll]);
 
   useEffect(() => {
+    const numberRegex = /^\d$/;
+    const indexString = searchParams.get('index') || '0';
+    const index = numberRegex.test(indexString) ? parseInt(indexString) : 0;
+    const cursor = btoa(`{"idx":${index + 1}}`);
+    setPagination({ nextCursor: cursor, prevCursor: null, hasNext: true, hasPrev: false, type: 'cursor' });
     fetchNews();
   }, []);
 

@@ -57,7 +57,7 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
 
   return (
     <section className="relative h-full w-full flex-shrink-0 overflow-hidden transition-opacity duration-300">
-      <div className="absolute bottom-0 px-8 pb-10">
+      <div className="absolute bottom-0 px-8 pb-8">
         <div className="flex justify-between gap-4">
           <div>
             <span className="rounded-xl border border-gray-60 px-1.5 py-0.5 typography-caption">

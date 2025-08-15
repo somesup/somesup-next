@@ -53,7 +53,7 @@ export type NewsDto = {
 export type ArticlesRequestDto = {
   cursor: string;
   limit?: number;
-  scrapped?: boolean;
+  scraped?: boolean;
   liked?: boolean;
   highlight?: boolean;
 };
