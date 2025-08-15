@@ -33,8 +33,7 @@ const HomePage = () => {
       const result = await getArticles(15, pagination?.nextCursor);
       if (result.error) return console.error('Failed to fetch articles:', result.error);
 
-      const data = result.data.map(d => ({ ...mockNews, ...d }));
-      setNewsList(prev => [...prev, ...data]);
+      setNewsList(prev => [...prev, ...result.data]);
       setPagination(result.pagination || null);
 
       setTimeout(() => {
