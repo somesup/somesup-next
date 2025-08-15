@@ -6,6 +6,7 @@ import NewsCard from '@/components/features/news/news-card';
 import { getArticles } from '@/lib/apis/apis';
 import { NewsDto, PaginationDto } from '@/types/dto';
 import PageSelector from '@/components/ui/page-selector';
+import { markDailyRead } from '@/lib/utils/news-daily';
 
 const HighlightPage = () => {
   const [newsList, setNewsList] = useState<NewsDto[]>([]);
@@ -80,6 +81,7 @@ const HighlightPage = () => {
 
   useEffect(() => {
     fetchNews();
+    markDailyRead();
   }, []);
 
   return (

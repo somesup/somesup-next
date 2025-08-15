@@ -1,9 +1,9 @@
 'use client';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdFiberManualRecord } from 'react-icons/md';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-
+import { isDailyUnread } from '@/lib/utils/news-daily';
 type Page = { href: string; label: string };
 
 const pages: Page[] = [
@@ -15,9 +15,15 @@ const pages: Page[] = [
 const PageSelector = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [unread, setUnread] = useState(false);
 
   const currentPage = pages.find(p => p.href === pathname) ?? pages[0];
   const otherPages = pages.filter(p => p.href !== currentPage.href);
+
+  useEffect(() => {
+    const u = isDailyUnread();
+    setUnread(u);
+  }, []);
 
   return (
     <>
@@ -28,7 +34,7 @@ const PageSelector = () => {
             onClick={() => setIsOpen(prev => !prev)}
             className="relative flex items-center typography-small-title"
           >
-            {!isOpen && (
+            {!isOpen && unread && (
               <MdFiberManualRecord size={12} color="#FF3F62" className="absolute -left-5 top-1/2 -translate-y-1/2" />
             )}
             <span>{currentPage.label}</span>
@@ -47,7 +53,7 @@ const PageSelector = () => {
                   className="relative whitespace-nowrap typography-small-title"
                   onClick={() => setIsOpen(false)}
                 >
-                  {label === '5분 뉴스' && (
+                  {label === '5분 뉴스' && unread && (
                     <MdFiberManualRecord
                       size={12}
                       color="#FF3F62"

@@ -6,6 +6,8 @@ import NewsCard from '@/components/features/news/news-card';
 import { getArticles } from '@/lib/apis/apis';
 import { NewsDto, PaginationDto } from '@/types/dto';
 import PageSelector from '@/components/ui/page-selector';
+import { isDailyUnread } from '@/lib/utils/news-daily';
+import { toast } from '@/components/ui/toast';
 
 const HomePage = () => {
   const [newsList, setNewsList] = useState<NewsDto[]>([]);
@@ -14,6 +16,7 @@ const HomePage = () => {
   const [currentView, setCurrentView] = useState<'abstract' | 'detail'>('abstract');
   const [isScrolling, setIsScrolling] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [unread, setUnread] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -66,6 +69,14 @@ const HomePage = () => {
       if (newIndex >= newsList.length - 5 && pagination?.hasNext && !isLoading) fetchNews();
     }, 100);
   }, [currentIndex, newsList.length, pagination?.hasNext, fetchNews, isLoading]);
+
+  useEffect(() => {
+    const u = isDailyUnread();
+    setUnread(u);
+    if (u) {
+      toast.fiveNews();
+    }
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
