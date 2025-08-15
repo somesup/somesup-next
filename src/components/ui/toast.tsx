@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { MdError } from 'react-icons/md';
 import { Toast, useToastStore } from '@/lib/stores/toast';
 
@@ -41,14 +41,31 @@ export const ToastContainer = () => {
 };
 
 export const ToastItem = ({ title, description, type }: Toast) => {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (type !== 'promo') return;
+    const enter = requestAnimationFrame(() => setShow(true));
+    const exit = setTimeout(() => setShow(false), 7800);
+    return () => {
+      cancelAnimationFrame(enter);
+      clearTimeout(exit);
+    };
+  }, [type]);
+
   if (type === 'promo') {
     return (
       <Link
         href="/highlight"
-        className="flex w-full items-start gap-3 rounded-xl bg-white p-3 text-left shadow-lg ring-1 ring-black/10"
+        className={[
+          'relative flex w-full items-start gap-3 rounded-xl bg-white p-3 text-left',
+          'overflow-hidden',
+          'transition-all duration-300 will-change-transform',
+          show ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0',
+        ].join(' ')}
       >
         <div className="relative flex shrink-0 items-center justify-center rounded-md">{toastIcon[type]}</div>
-        <div className="text-gray-10">
+        <div className="relative text-gray-10">
           <p className="typography-body1">{title}</p>
           <span className="typography-body2">{description}</span>
         </div>
