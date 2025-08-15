@@ -1,7 +1,13 @@
 import { Expand, SectionType } from './types';
 
 export type Error = { status: number; message: string };
-export type PaginationDto = { hasNext: boolean; nextCursor: string; type: 'cursor' };
+export type PaginationDto = {
+  type: 'cursor';
+  hasNext: boolean;
+  hasPrev: boolean;
+  nextCursor: string | null;
+  prevCursor: string | null;
+};
 export type APIResult<T> = { error: Error; data: null } | { error: null; data: T; pagination?: PaginationDto };
 
 export type PhoneRequestDto = { phoneNumber: string };
@@ -27,14 +33,11 @@ export type SignInResponseDto = Expand<{
   isCreated: boolean;
 }>;
 
-
-
-export type NewsProviderDto = { id: number; image: string; friendlyName: string; logoUrl: string };
-
+export type NewsProviderDto = { id: number; name: string; friendlyName: string; newsUrl: string; logoUrl: string };
 export type NewsDto = {
   id: number;
   section: { id: number; name: string; friendlyName: string };
-  providers: { id: number; name: string; friendlyName: string; logoUrl: string }[];
+  providers: NewsProviderDto[];
   keywords: { id: number; name: string }[];
   title: string;
   oneLineSummary: string;
@@ -47,3 +50,10 @@ export type NewsDto = {
   scrap: { isScrapped: boolean; count: number };
 };
 
+export type ArticlesRequestDto = {
+  cursor: string;
+  limit?: number;
+  scrapped?: boolean;
+  liked?: boolean;
+  highlight?: boolean;
+};
