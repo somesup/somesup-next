@@ -46,7 +46,7 @@ export const ToastItem = ({ title, description, type }: Toast) => {
   useEffect(() => {
     if (type !== 'promo') return;
     const enter = requestAnimationFrame(() => setShow(true));
-    const exit = setTimeout(() => setShow(false), 7800);
+    const exit = setTimeout(() => setShow(false), 3800);
     return () => {
       cancelAnimationFrame(enter);
       clearTimeout(exit);
@@ -86,7 +86,7 @@ export const ToastItem = ({ title, description, type }: Toast) => {
 const createToast = (type: Toast['type']) => (title: string, description: string) => {
   const id = crypto.randomUUID();
   useToastStore.getState().add({ type, title, description, id });
-  setTimeout(() => useToastStore.getState().remove(id), type === 'promo' ? 8000 : 3000);
+  setTimeout(() => useToastStore.getState().remove(id), type === 'promo' ? 4000 : 3000);
 };
 
 export const toast = {
