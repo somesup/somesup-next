@@ -27,8 +27,6 @@ export type SignInResponseDto = Expand<{
   isCreated: boolean;
 }>;
 
-
-
 export type NewsProviderDto = { id: number; image: string; friendlyName: string; logoUrl: string };
 
 export type NewsDto = {
@@ -47,3 +45,22 @@ export type NewsDto = {
   scrap: { isScrapped: boolean; count: number };
 };
 
+export type MyPageDto = {
+  user: {
+    id: number;
+    nickname: string;
+    phone: string;
+    is_authenticated: boolean;
+    created_at: string;
+    updated_at: string;
+  };
+  sectionStats: {
+    sectionId: number;
+    sectionName: SectionType;
+    preference: number;
+    behaviorScore: number;
+  }[];
+  keywordStats: { keyword: string; count: number }[];
+};
+
+export type MyPageApiResponseDto = { success: boolean; data: MyPageDto; message?: string };
