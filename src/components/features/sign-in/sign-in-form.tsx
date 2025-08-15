@@ -54,7 +54,7 @@ const SignInForm = () => {
       }, new Map()) as unknown as Record<SectionType, number>;
 
       setUser({ user: data.user, preferences, ...data.tokens });
-      if (data.isCreated) return router.push('/set-nickname');
+      if (data.isCreated) return router.push('/set-nickname?isCreated=true');
       else return router.push('/');
     }
     if (error.status === 401) return setErrorMessage('인증번호가 일치하지 않습니다');
