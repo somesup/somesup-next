@@ -1,7 +1,7 @@
 'use client';
 
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { ChangeEvent, FormEvent, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import SignInInput from '@/components/features/sign-in/sign-in-input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
@@ -9,10 +9,10 @@ import { useUserSESStore, useUserStore } from '@/lib/stores/user';
 import { authUpdateUser } from '@/lib/apis/apis';
 
 const SetNicknamePage = () => {
+  const searchParams = useSearchParams();
   const initialNickname = useUserSESStore(state => state.user.nickname);
   const updateNickname = useUserStore(state => state.setNickname);
   const [nickname, setNickname] = useState(initialNickname);
-  const [isInitialSetup, setIsInitialSetup] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
@@ -22,7 +22,8 @@ const SetNicknamePage = () => {
     const { error } = await authUpdateUser({ nickname });
     if (!error) {
       updateNickname(nickname);
-      return isInitialSetup ? router.push('/set-preference') : router.push('/mypage');
+      const isCreated = searchParams.get('isCreated');
+      return isCreated ? router.push('/set-preferences') : router.push('/my-page');
     }
     toast.serverError();
   };
@@ -34,10 +35,6 @@ const SetNicknamePage = () => {
     if (nickname.length > 15) setErrorMessage('닉네임은 15자까지 입력할 수 있어요');
     setNickname(nickname);
   };
-
-  useEffect(() => {
-    setIsInitialSetup(document.referrer.split('/').at(-1) === 'sign-in');
-  }, []);
 
   return (
     <main className="flex h-screen flex-col px-8 py-4">

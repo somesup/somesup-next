@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useMemo, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { NewsProviderDto } from '@/types/dto';
 
@@ -9,9 +10,9 @@ type PressTrayProps = { items: NewsProviderDto[] };
 type LogoProps = { item: NewsProviderDto; size: number; layoutId?: string };
 
 /*확대되기 전 로고 사이즈입니다*/
-const COLLAPSED_SIZE = 28;
+const COLLAPSED_SIZE = 24;
 /*확대된 후의 로고 사이즈입니다*/
-const EXPANDED_SIZE = 75;
+const EXPANDED_SIZE = 60;
 
 const PressTray = ({ items = [] }: PressTrayProps) => {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -27,13 +28,88 @@ const PressTray = ({ items = [] }: PressTrayProps) => {
     setOpen(false);
   };
 
+  const modalContent = (
+    <AnimatePresence>
+      {open && (
+        <>
+          {/* 배경 오버레이 */}
+          <motion.div
+            className="fixed inset-0 z-[9998]"
+            onClick={close}
+            onTouchEnd={close}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ background: '#1717176B' }}
+          />
+
+          {/* 모달 컨텐츠 */}
+          <motion.div
+            className="fixed z-[9999] rounded-2xl p-3"
+            style={{
+              ['--g' as any]: '32px',
+              left: 'var(--g)',
+              right: 'var(--g)',
+              bottom: '48px',
+              background: '#2b2b2b',
+              backdropFilter: 'blur(4px)',
+              transformOrigin: '50% 100%',
+            }}
+            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              transition: { type: 'spring', stiffness: 420, damping: 32 },
+            }}
+            exit={{ opacity: 0, y: 10, scale: 0.98 }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-1">
+              <p className="typography-caption3 text-white/90">원문 기사 보기</p>
+            </div>
+
+            <div
+              className="flex gap-3 overflow-x-auto px-1 py-1"
+              ref={scrollerRef}
+              style={{
+                WebkitOverflowScrolling: 'touch',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                WebkitMaskImage:
+                  'linear-gradient(90deg, transparent 0, #000 8px, #000 calc(100% - 8px), transparent 100%)',
+                maskImage: 'linear-gradient(90deg, transparent 0, #000 8px, #000 calc(100% - 8px), transparent 100%)',
+              }}
+            >
+              {top3.map(it => (
+                <LogoLink key={it.id} item={it} size={EXPANDED_SIZE} layoutId={`logo-${it.id}`} />
+              ))}
+              <motion.div
+                className="flex gap-3"
+                initial="hidden"
+                animate="show"
+                variants={{ show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } } }}
+              >
+                {rest.map(it => (
+                  <motion.div key={it.id} variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}>
+                    <LogoLink item={it} size={EXPANDED_SIZE} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <>
       <motion.button
         aria-label="뉴스사 목록 열기"
         onClick={() => setOpen(true)}
         aria-hidden={open}
-        className={`relative z-[60] ${open ? 'pointer-events-none opacity-0' : ''}`}
+        className={`relative z-[60] ${open ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
         style={{ background: 'transparent', padding: 0 }}
         whileTap={{ scale: 0.97 }}
       >
@@ -44,74 +120,7 @@ const PressTray = ({ items = [] }: PressTrayProps) => {
         </div>
       </motion.button>
 
-      <AnimatePresence>
-        {open && (
-          <>
-            <motion.div
-              className="absolute inset-0 z-50"
-              onClick={close}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              style={{ background: '#1717176B' }}
-            />
-            <motion.div
-              className="absolute z-[70] rounded-2xl p-3"
-              style={{
-                ['--g' as any]: '32px',
-                left: 'var(--g)',
-                right: 'var(--g)',
-                bottom: '48px',
-                background: '#2b2b2b',
-                backdropFilter: 'blur(4px)',
-                transformOrigin: '50% 100%',
-              }}
-              initial={{ opacity: 0, y: 12, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 420, damping: 32 } }}
-              exit={{ opacity: 0, y: 10, scale: 0.98 }}
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between px-1">
-                <p className="typography-caption3 text-white/90">원문 기사 보기</p>
-              </div>
-
-              <div
-                className="flex gap-3 overflow-x-auto px-1 py-1"
-                ref={scrollerRef}
-                style={{
-                  WebkitOverflowScrolling: 'touch',
-                  scrollbarWidth: 'none',
-                  msOverflowStyle: 'none',
-                  WebkitMaskImage:
-                    'linear-gradient(90deg, transparent 0, #000 8px, #000 calc(100% - 8px), transparent 100%)',
-                  maskImage: 'linear-gradient(90deg, transparent 0, #000 8px, #000 calc(100% - 8px), transparent 100%)',
-                }}
-              >
-                <style jsx>{`
-                  div::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}</style>
-                {top3.map(it => (
-                  <LogoLink key={it.id} item={it} size={EXPANDED_SIZE} layoutId={`logo-${it.id}`} />
-                ))}
-                <motion.div
-                  className="flex gap-3"
-                  initial="hidden"
-                  animate="show"
-                  variants={{ show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } } }}
-                >
-                  {rest.map(it => (
-                    <motion.div key={it.id} variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}>
-                      <LogoLink item={it} size={EXPANDED_SIZE} />
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      {createPortal(modalContent, document.body)}
     </>
   );
 };
@@ -128,7 +137,7 @@ const LogoBubble = ({ item, size, layoutId }: LogoProps) => {
       transition={{ type: 'spring', stiffness: 520, damping: 38 }}
     >
       <Image
-        src={item.image}
+        src={item.logoUrl}
         alt={item.friendlyName}
         width={size}
         height={size}
@@ -142,7 +151,7 @@ const LogoLink = ({ item, size, layoutId }: LogoProps) => {
   const tileWidth = size + 4;
   return (
     <a
-      href={item.logoUrl}
+      href={item.newsUrl}
       target="_blank"
       rel="noopener noreferrer"
       className="group flex shrink-0 flex-col items-center gap-1"
