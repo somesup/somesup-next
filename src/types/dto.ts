@@ -50,6 +50,24 @@ export type NewsDto = {
   scrap: { isScraped: boolean; count: number };
 };
 
+export type MyPageDto = {
+  user: {
+    id: number;
+    nickname: string;
+    phone: string;
+    isAuthenticated: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
+  sectionStats: {
+    sectionId: number;
+    sectionName: SectionType;
+    preference: number;
+    behaviorScore: number;
+  }[];
+  keywordStats: { keyword: string; count: number }[];
+};
+
 export type ArticlesRequestDto = {
   cursor: string;
   limit?: number;

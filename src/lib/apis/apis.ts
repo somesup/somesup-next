@@ -1,5 +1,6 @@
 import {
   APIResult,
+  MyPageDto,
   ArticlesRequestDto,
   NewsDto,
   PhoneRequestDto,
@@ -35,6 +36,10 @@ export async function authUpdatePreferences(preferences: UpdatePreferencesReques
   return api.patch('/users/section-preferences', preferences);
 }
 
+export async function getMyPageStats(): Promise<APIResult<MyPageDto>> {
+  return api.get(`/users/mypage-stats`);
+}
+
 export async function getArticles({ cursor, limit, ...option }: ArticlesRequestDto): Promise<APIResult<NewsDto[]>> {
   return api.get('/articles', { cursor, limit: limit || 15, ...option });
 }
@@ -61,4 +66,12 @@ export async function deleteArticleScrap(id: number): Promise<APIResult<null>> {
 
 export async function postArticleEvent(id: number, eventType: 'VIEW' | 'DETAIL_VIEW'): Promise<APIResult<null>> {
   return api.post(`/articles/${id}/view-events`, { eventType });
+}
+
+export async function getScrapedArticles(
+  limit: number = 15,
+  cursor?: string,
+  scraped: boolean = true,
+): Promise<APIResult<NewsDto[]>> {
+  return api.get(`/articles/`, { limit, cursor, scraped });
 }

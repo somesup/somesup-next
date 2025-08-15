@@ -8,8 +8,8 @@ type Page = { href: string; label: string };
 
 const pages: Page[] = [
   { href: '/', label: "Some's up" },
-  { href: '/highlight', label: '5분 뉴스' },
-  { href: '/mypage', label: '마이페이지' },
+  { href: '/news', label: '5분 뉴스' },
+  { href: '/my-page', label: '마이페이지' },
 ];
 
 const PageSelector = () => {
