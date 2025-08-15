@@ -128,7 +128,7 @@ const LogoBubble = ({ item, size, layoutId }: LogoProps) => {
       transition={{ type: 'spring', stiffness: 520, damping: 38 }}
     >
       <Image
-        src={item.image}
+        src={item.logoUrl}
         alt={item.friendlyName}
         width={size}
         height={size}
@@ -142,7 +142,7 @@ const LogoLink = ({ item, size, layoutId }: LogoProps) => {
   const tileWidth = size + 4;
   return (
     <a
-      href={item.logoUrl}
+      href={item.newsUrl}
       target="_blank"
       rel="noopener noreferrer"
       className="group flex shrink-0 flex-col items-center gap-1"
