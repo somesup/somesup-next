@@ -13,7 +13,7 @@ const SetPreferenceSlider = ({ value, onChange, shouldAnimation }: SetPreference
   const [isAnimating, setIsAnimating] = useState(false);
   const [displayValue, setDisplayValue] = useState(value);
 
-  const snapDelay = 500;
+  const snapDelay = 200;
   const snapValues = [0, 50, 100];
 
   const findNearestSnapValue = useCallback(
