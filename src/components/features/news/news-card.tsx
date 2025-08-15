@@ -7,12 +7,11 @@ import NewsAbstractView from './news-abstract-view';
 import { useNewsDrag } from '@/lib/hooks/useNewsDrag';
 import { NewsDto } from '@/types/dto';
 import { postArticleEvent } from '@/lib/apis/apis';
-import PageSelector from '@/components/ui/page-selector';
 
 type NewsCardProps = {
   news: NewsDto;
   active: boolean;
-  onViewChange: (view: 'abstract' | 'detail') => void;
+  onViewChange?: (view: 'abstract' | 'detail') => void;
 };
 
 const NewsCard = ({ news, active, onViewChange }: NewsCardProps) => {
@@ -34,7 +33,7 @@ const NewsCard = ({ news, active, onViewChange }: NewsCardProps) => {
   }
 
   useEffect(() => {
-    onViewChange(currentView);
+    onViewChange?.(currentView);
   }, [currentView]);
 
   return (
@@ -60,7 +59,6 @@ const NewsCard = ({ news, active, onViewChange }: NewsCardProps) => {
         {...handlers}
       >
         <div className="absolute inset-0" style={{ opacity }}>
-          {active && <PageSelector />}
           <NewsAbstractView {...news} />
         </div>
         <div

@@ -5,6 +5,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import NewsCard from '@/components/features/news/news-card';
 import { getArticles } from '@/lib/apis/apis';
 import { NewsDto, PaginationDto } from '@/types/dto';
+import PageSelector from '@/components/ui/page-selector';
 
 const HomePage = () => {
   const [newsList, setNewsList] = useState<NewsDto[]>([]);
@@ -83,6 +84,9 @@ const HomePage = () => {
 
   return (
     <div className="fixed h-full w-full max-w-mobile bg-black">
+      <div className={currentView === 'abstract' ? 'opacity-100' : 'opacity-0'}>
+        <PageSelector />
+      </div>
       <div
         ref={containerRef}
         className={`h-full w-full snap-y snap-mandatory overscroll-none ${isScrolling ? 'scroll-auto' : 'scroll-smooth'} ${currentView === 'detail' ? 'overflow-y-hidden' : 'overflow-y-auto'} `}
