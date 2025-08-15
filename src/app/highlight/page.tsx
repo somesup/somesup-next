@@ -108,7 +108,7 @@ const HighlightPage = () => {
         {!pagination?.hasNext && (
           <div className="flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 text-center">
             <p className="typography-sub-title">
-              오늘의 뉴스를
+              오늘의 5분 뉴스를
               <br />
               모두 확인했어요 !
             </p>
