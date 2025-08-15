@@ -85,7 +85,7 @@ const ScrapListPage = () => {
   return (
     <div className="fixed h-full w-full max-w-mobile">
       <div
-        className={`fixed left-0 right-0 top-5 z-50 flex justify-center ${currentView === 'abstract' ? 'opacity-100' : 'opacity-0'}`}
+        className={`fixed left-1/2 top-5 z-50 flex w-mobile -translate-x-1/2 justify-center ${currentView === 'abstract' ? 'opacity-100' : 'opacity-0'}`}
       >
         <a href="/my-page/scrap" className="absolute left-4 top-1/2 -translate-y-1/2">
           <MdKeyboardArrowLeft size={28} />
