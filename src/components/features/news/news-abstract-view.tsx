@@ -5,8 +5,12 @@ import { GoHeartFill } from 'react-icons/go';
 import { GoHeart } from 'react-icons/go';
 import { deleteArticleLike, deleteArticleScrap, postArticleLike, postArticleScrap } from '@/lib/apis/apis';
 import { NewsDto } from '@/types/dto';
+import PressTray from './press-tray';
 
-type NewsAbstractViewProps = Pick<NewsDto, 'id' | 'title' | 'oneLineSummary' | 'section' | 'like' | 'scrap'>;
+type NewsAbstractViewProps = Pick<
+  NewsDto,
+  'id' | 'title' | 'oneLineSummary' | 'section' | 'like' | 'scrap' | 'providers'
+>;
 
 const NewsAbstractView = (news: NewsAbstractViewProps) => {
   const [isLiked, setIsLiked] = useState(news.like.isLiked);
@@ -73,6 +77,9 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
         </div>
         <hr className="my-4" />
         <p className="line-clamp-3 break-keep typography-body2">{news.oneLineSummary}</p>
+        <div className="text-right">
+          <PressTray items={news.providers} />
+        </div>
       </div>
     </section>
   );
