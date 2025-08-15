@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { MdError } from 'react-icons/md';
 import { Toast, useToastStore } from '@/lib/stores/toast';
@@ -17,23 +16,35 @@ const toastIcon: Record<Toast['type'], ReactNode> = {
 
 export const ToastContainer = () => {
   const toasts = useToastStore(state => state.toasts);
+  const promos = toasts.filter(t => t.type === 'promo');
+  const others = toasts.filter(t => t.type !== 'promo');
 
   return (
-    <div className="fixed left-1/2 top-0 z-50 flex w-full -translate-x-1/2 flex-col gap-2 p-4 sm:bottom-0 sm:left-auto sm:right-0 sm:top-auto sm:w-[360px] sm:translate-x-0">
-      {toasts.map(toast => (
-        <ToastItem key={toast.id} {...toast} />
-      ))}
+    <div>
+      {promos.length > 0 && (
+        <div className="fixed left-1/2 top-0 z-50 w-full max-w-mobile -translate-x-1/2 p-4">
+          {promos.map(t => (
+            <ToastItem key={t.id} {...t} />
+          ))}
+        </div>
+      )}
+
+      {others.length > 0 && (
+        <div className="fixed left-1/2 top-0 z-40 flex w-full -translate-x-1/2 flex-col gap-2 p-4 sm:bottom-0 sm:left-auto sm:right-0 sm:top-auto sm:w-[360px] sm:translate-x-0">
+          {others.map(t => (
+            <ToastItem key={t.id} {...t} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
 
 export const ToastItem = ({ title, description, type }: Toast) => {
-  const router = useRouter();
-
   if (type === 'promo') {
     return (
       <Link
-        href="/news"
+        href="/highlight"
         className="flex w-full items-start gap-3 rounded-xl bg-white p-3 text-left shadow-lg ring-1 ring-black/10"
       >
         <div className="relative flex shrink-0 items-center justify-center rounded-md">{toastIcon[type]}</div>
