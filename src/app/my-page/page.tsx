@@ -13,7 +13,7 @@ import Hexagon from '@/components/ui/hexagon';
 import WordCloud from '@/components/features/my-page/word-cloud';
 import PageSelector from '@/components/ui/page-selector';
 
-export default function MyPage() {
+const MyPage = () => {
   const [data, setData] = useState<MyPageDto | null>(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -35,25 +35,33 @@ export default function MyPage() {
 
   const nickname = data?.user.nickname ?? '사용자';
 
-  return (
-    <main className="fixed flex h-full w-full max-w-mobile flex-col items-center justify-center bg-gray-10 text-[#FAFAFA]">
-      <PageSelector />
-      <div className="w-full px-10 pt-12">
-        <section className="mb-5">
-          <div className="flex items-center justify-between">
-            <div className="inline-flex items-baseline gap-2">
-              <p className="typography-sub-title-bold">
-                {nickname}
-                <span className="ml-[0.125rem] typography-body1">님</span>
-              </p>
-              <Link href="/set-nickname" className="inline-block">
-                <RiPencilFill className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
+  const prefRadii = React.useMemo(() => {
+    const stats = (data?.sectionStats ?? []).slice().sort((a, b) => a.sectionId - b.sectionId);
+    return stats.map(s => (s.preference / 3) * 90);
+  }, [data?.sectionStats]);
 
-        <section className="mb-5">
+  const behaviorRadii = React.useMemo(() => {
+    const stats = (data?.sectionStats ?? []).slice().sort((a, b) => a.sectionId - b.sectionId);
+    return stats.map(s => (s.behaviorScore / 3) * 90);
+  }, [data?.sectionStats]);
+
+  return (
+    <main className="flex h-full w-full max-w-mobile flex-col items-center justify-center bg-gray-10">
+      <PageSelector />
+      <div className="w-full px-10 pt-16">
+        <div className="mb-5 flex items-center justify-between">
+          <div className="inline-flex items-baseline gap-2">
+            <p className="typography-sub-title-bold">
+              {nickname}
+              <span className="ml-[0.125rem] typography-body1">님</span>
+            </p>
+            <Link href="/set-nickname" className="inline-block">
+              <RiPencilFill className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+
+        <div className="mb-5">
           <Link
             href="/my-page/scrap"
             className="flex w-full items-center justify-between gap-3 rounded-xl bg-[#2E2E2E] p-3 text-left"
@@ -64,7 +72,7 @@ export default function MyPage() {
             </div>
             <FaChevronRight className="h-5 w-5" />
           </Link>
-        </section>
+        </div>
 
         <section className="mb-5">
           <h2 className="mb-2 typography-body2">내가 읽은 뉴스</h2>
@@ -73,18 +81,12 @@ export default function MyPage() {
               <Hexagon
                 hexagons={[
                   {
-                    radii: (data?.sectionStats ?? [])
-                      .slice()
-                      .sort((a, b) => a.sectionId - b.sectionId)
-                      .map(s => (s.preference / 3) * 90),
+                    radii: prefRadii,
                     fill: '#FF880060',
                     stroke: '#FF8800',
                   },
                   {
-                    radii: (data?.sectionStats ?? [])
-                      .slice()
-                      .sort((a, b) => a.sectionId - b.sectionId)
-                      .map(s => (s.behaviorScore / 3) * 90),
+                    radii: behaviorRadii,
                     fill: '#AEFF8860',
                     stroke: '#AEFF88',
                   },
@@ -128,15 +130,9 @@ export default function MyPage() {
             )}
           </div>
         </section>
-
-        <footer className="typography-caption3 mt-8 grid place-items-center gap-2">
-          <p>
-            <button>로그아웃</button>
-            <span className="mx-2">|</span>
-            <button>탈퇴하기</button> {/* todo : 로그아웃 & 탈퇴 api 적용 */}
-          </p>
-        </footer>
       </div>
     </main>
   );
-}
+};
+
+export default MyPage;

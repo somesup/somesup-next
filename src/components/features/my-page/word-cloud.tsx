@@ -10,7 +10,7 @@ type CloudProps = {
   height?: number;
 };
 
-export default function WordCloud({ items, height = 240 }: CloudProps) {
+const WordCloud = ({ items, height = 240 }: CloudProps) => {
   const words: Word[] = (items ?? []).map(k => ({ text: k.keyword, value: k.count }));
 
   const options: Options = {
@@ -38,4 +38,6 @@ export default function WordCloud({ items, height = 240 }: CloudProps) {
       <ReactWordcloud words={words} options={options} />
     </div>
   );
-}
+};
+
+export default WordCloud;
