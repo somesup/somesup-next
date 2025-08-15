@@ -55,9 +55,9 @@ export type MyPageDto = {
     id: number;
     nickname: string;
     phone: string;
-    is_authenticated: boolean;
-    created_at: string;
-    updated_at: string;
+    isAuthenticated: boolean;
+    createdAt: string;
+    updatedAt: string;
   };
   sectionStats: {
     sectionId: number;
