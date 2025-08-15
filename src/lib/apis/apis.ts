@@ -1,6 +1,5 @@
 import {
   APIResult,
-  MyPageApiResponseDto,
   MyPageDto,
   NewsDto,
   PhoneRequestDto,

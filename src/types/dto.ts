@@ -62,5 +62,3 @@ export type MyPageDto = {
   }[];
   keywordStats: { keyword: string; count: number }[];
 };
-
-export type MyPageApiResponseDto = { success: boolean; data: MyPageDto; message?: string };

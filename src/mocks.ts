@@ -1,6 +1,4 @@
-import { MyPageApiResponseDto, NewsProviderDto } from './types/dto';
-import { NewsDto } from './types/dto';
-import { MyPageDto } from './types/dto';
+import { NewsProviderDto, NewsDto } from './types/dto';
 
 export const pressData: NewsProviderDto[] = [
   { id: 1, image: '/images/press-logo-example.png', logoUrl: 'https://news.daum.net/', friendlyName: '뉴스사 1' },
@@ -60,46 +58,5 @@ export const mockNews: NewsDto = {
   scrap: {
     isScrapped: false,
     count: 5,
-  },
-};
-
-export const MockMyPageApiResponse: MyPageApiResponseDto = {
-  success: true,
-  data: {
-    user: {
-      id: 1,
-      nickname: '귀여운 올빼미 #1',
-      phone: '01067872429',
-      is_authenticated: true,
-      created_at: '2025-08-12T14:37:02.263Z',
-      updated_at: '2025-08-12T14:37:02.263Z',
-    },
-    sectionStats: [
-      { sectionId: 1, sectionName: 'politics', preference: 3, behaviorScore: 3 },
-      { sectionId: 2, sectionName: 'economy', preference: 3, behaviorScore: 2 },
-      { sectionId: 3, sectionName: 'society', preference: 1, behaviorScore: 1 },
-      { sectionId: 4, sectionName: 'culture', preference: 3, behaviorScore: 1 },
-      { sectionId: 5, sectionName: 'tech', preference: 1, behaviorScore: 1 },
-      { sectionId: 6, sectionName: 'world', preference: 1, behaviorScore: 1 },
-    ],
-    keywordStats: [
-      { keyword: '도널드 트럼프', count: 2 },
-      { keyword: '백악관', count: 1 },
-      { keyword: '기자회견', count: 1 },
-      { keyword: '제도', count: 2 },
-      { keyword: '경제', count: 5 },
-      { keyword: '규제', count: 2 },
-      { keyword: '발전', count: 4 },
-      { keyword: '일자리', count: 1 },
-      { keyword: '기업', count: 3 },
-      { keyword: '국민', count: 4 },
-      { keyword: '창조경제', count: 2 },
-      { keyword: '대한민국', count: 6 },
-      { keyword: '교육', count: 1 },
-      { keyword: '미국', count: 1 },
-      { keyword: '수출', count: 1 },
-      { keyword: '역량', count: 1 },
-      { keyword: '법안', count: 1 },
-    ],
   },
 };
