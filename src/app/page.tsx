@@ -1,12 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import NewsCard from '@/components/features/news/news-card';
 import { getArticles } from '@/lib/apis/apis';
 import { NewsDto, PaginationDto } from '@/types/dto';
-
-import { mockNews } from '@/mocks';
-import Image from 'next/image';
 
 const HomePage = () => {
   const [newsList, setNewsList] = useState<NewsDto[]>([]);
@@ -30,7 +28,7 @@ const HomePage = () => {
       setIsLoading(true);
       const prevLength = newsList.length;
 
-      const result = await getArticles(15, pagination?.nextCursor);
+      const result = await getArticles({ cursor: pagination?.nextCursor || '' });
       if (result.error) return console.error('Failed to fetch articles:', result.error);
 
       setNewsList(prev => [...prev, ...result.data]);

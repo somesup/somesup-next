@@ -1,5 +1,6 @@
 import {
   APIResult,
+  ArticlesRequestDto,
   NewsDto,
   PhoneRequestDto,
   SignInRequestDto,
@@ -34,8 +35,12 @@ export async function authUpdatePreferences(preferences: UpdatePreferencesReques
   return api.patch('/users/section-preferences', preferences);
 }
 
-export async function getArticles(limit: number = 15, cursor?: string): Promise<APIResult<NewsDto[]>> {
-  return api.get('/articles', { limit, cursor });
+export async function getArticles({ cursor, limit, ...option }: ArticlesRequestDto): Promise<APIResult<NewsDto[]>> {
+  return api.get('/articles', { cursor, limit: limit || 15, ...option });
+}
+
+export async function getArticle(id: number): Promise<APIResult<NewsDto>> {
+  return api.get(`/articles/${id}`);
 }
 
 export async function postArticleLike(id: number): Promise<APIResult<null>> {
