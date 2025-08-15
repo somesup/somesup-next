@@ -5,9 +5,12 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import NewsCard from '@/components/features/news/news-card';
 import { getArticles } from '@/lib/apis/apis';
 import { NewsDto, PaginationDto } from '@/types/dto';
-import PageSelector from '@/components/ui/page-selector';
+import { MdKeyboardArrowLeft } from 'react-icons/md';
+import { useSearchParams } from 'next/navigation';
 
-const HomePage = () => {
+const ScrapListPage = () => {
+  const searchParams = useSearchParams();
+
   const [newsList, setNewsList] = useState<NewsDto[]>([]);
   const [pagination, setPagination] = useState<PaginationDto | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -29,7 +32,7 @@ const HomePage = () => {
       setIsLoading(true);
       const prevLength = newsList.length;
 
-      const result = await getArticles({ cursor: pagination?.nextCursor || '' });
+      const result = await getArticles({ cursor: pagination?.nextCursor || '', scraped: true });
       if (result.error) return console.error('Failed to fetch articles:', result.error);
 
       setNewsList(prev => [...prev, ...result.data]);
@@ -79,13 +82,23 @@ const HomePage = () => {
   }, [handleScroll]);
 
   useEffect(() => {
+    const numberRegex = /^\d$/;
+    const indexString = searchParams.get('index') || '0';
+    const index = numberRegex.test(indexString) ? parseInt(indexString) : 0;
+    const cursor = btoa(`{"idx":${index + 1}}`);
+    setPagination({ nextCursor: cursor, prevCursor: null, hasNext: true, hasPrev: false, type: 'cursor' });
     fetchNews();
   }, []);
 
   return (
-    <div className="fixed h-full w-full max-w-mobile bg-black">
-      <div className={currentView === 'abstract' ? 'opacity-100' : 'opacity-0'}>
-        <PageSelector />
+    <div className="fixed h-full w-full max-w-mobile">
+      <div
+        className={`fixed left-1/2 top-5 z-50 flex w-full max-w-mobile -translate-x-1/2 justify-center ${currentView === 'abstract' ? 'opacity-100' : 'opacity-0'}`}
+      >
+        <a href="/my-page/scrap" className="absolute left-4 top-1/2 -translate-y-1/2">
+          <MdKeyboardArrowLeft size={28} />
+        </a>
+        <span>스크랩 기사</span>
       </div>
       <div
         ref={containerRef}
@@ -108,7 +121,7 @@ const HomePage = () => {
         {!pagination?.hasNext && (
           <div className="flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 text-center">
             <p className="typography-sub-title">
-              오늘의 뉴스를
+              저장한 뉴스를
               <br />
               모두 확인했어요 !
             </p>
@@ -127,4 +140,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default ScrapListPage;

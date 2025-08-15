@@ -5,13 +5,17 @@ import { GoHeartFill } from 'react-icons/go';
 import { GoHeart } from 'react-icons/go';
 import { deleteArticleLike, deleteArticleScrap, postArticleLike, postArticleScrap } from '@/lib/apis/apis';
 import { NewsDto } from '@/types/dto';
+import PressTray from './press-tray';
 
-type NewsAbstractViewProps = Pick<NewsDto, 'id' | 'title' | 'oneLineSummary' | 'section' | 'like' | 'scrap'>;
+type NewsAbstractViewProps = Pick<
+  NewsDto,
+  'id' | 'title' | 'oneLineSummary' | 'section' | 'like' | 'scrap' | 'providers'
+>;
 
 const NewsAbstractView = (news: NewsAbstractViewProps) => {
   const [isLiked, setIsLiked] = useState(news.like.isLiked);
   const [likeCount, setLikeCount] = useState(news.like.count);
-  const [isScrapped, setIsScrapped] = useState(news.scrap.isScrapped);
+  const [isScraped, setIsScrapped] = useState(news.scrap.isScraped);
 
   const handleToggleLike = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -40,7 +44,7 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (isScrapped) {
+    if (isScraped) {
       setIsScrapped(false);
       const { error } = await deleteArticleScrap(news.id);
       if (error) setIsScrapped(true);
@@ -53,7 +57,7 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
 
   return (
     <section className="relative h-full w-full flex-shrink-0 overflow-hidden transition-opacity duration-300">
-      <div className="absolute bottom-0 px-8 pb-10">
+      <div className="absolute bottom-0 px-8 pb-8">
         <div className="flex justify-between gap-4">
           <div>
             <span className="rounded-xl border border-gray-60 px-1.5 py-0.5 typography-caption">
@@ -67,12 +71,15 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
               <span className="!leading-3 typography-caption">{likeCount}</span>
             </button>
             <button className="touch-manipulation" onClick={handleToggleScrap}>
-              {isScrapped ? <GoBookmarkFill color="#FAFAFA" size="30" /> : <GoBookmark size="30" />}
+              {isScraped ? <GoBookmarkFill color="#FAFAFA" size="30" /> : <GoBookmark size="30" />}
             </button>
           </div>
         </div>
         <hr className="my-4" />
         <p className="line-clamp-3 break-keep typography-body2">{news.oneLineSummary}</p>
+        <div className="text-right">
+          <PressTray items={news.providers} />
+        </div>
       </div>
     </section>
   );

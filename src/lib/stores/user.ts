@@ -35,7 +35,10 @@ export const useUserStore = create<UserStore>()(
       resetUser: () => set(() => initialUser),
       setNickname: nickname => set(state => void (state.user.nickname = nickname)),
       setPreferences: sectionPreferences => set(state => void (state.preferences = sectionPreferences)),
-      setPreference: (section, preference) => set(state => void (state.preferences[section] = preference)),
+      setPreference: (section, preference) =>
+        set(state => {
+          state.preferences[section] = preference;
+        }),
       setTokens: tokens => set(state => Object.assign(state, tokens)),
     })),
     {

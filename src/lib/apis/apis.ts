@@ -1,6 +1,7 @@
 import {
   APIResult,
   MyPageDto,
+  ArticlesRequestDto,
   NewsDto,
   PhoneRequestDto,
   SignInRequestDto,
@@ -23,6 +24,10 @@ export async function authPhoneVerify({ phoneNumber, code }: SignInRequestDto): 
   });
 }
 
+export async function authGuestLogin(): Promise<APIResult<SignInResponseDto>> {
+  return api.post('/auth/guest-login');
+}
+
 export async function authUpdateUser({ nickname }: UpdateUserRequestDto): Promise<APIResult<null>> {
   return api.patch('/users', { nickname });
 }
@@ -35,8 +40,12 @@ export async function getMyPageStats(): Promise<APIResult<MyPageDto>> {
   return api.get(`/users/mypage-stats`);
 }
 
-export async function getArticles(limit: number = 15, cursor?: string): Promise<APIResult<NewsDto[]>> {
-  return api.get('/articles', { limit, cursor });
+export async function getArticles({ cursor, limit, ...option }: ArticlesRequestDto): Promise<APIResult<NewsDto[]>> {
+  return api.get('/articles', { cursor, limit: limit || 15, ...option });
+}
+
+export async function getArticle(id: number): Promise<APIResult<NewsDto>> {
+  return api.get(`/articles/${id}`);
 }
 
 export async function postArticleLike(id: number): Promise<APIResult<null>> {
