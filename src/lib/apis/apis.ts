@@ -22,6 +22,10 @@ export async function authPhoneVerify({ phoneNumber, code }: SignInRequestDto): 
   });
 }
 
+export async function authGuestLogin(): Promise<APIResult<SignInResponseDto>> {
+  return api.post('/auth/guest-login');
+}
+
 export async function authUpdateUser({ nickname }: UpdateUserRequestDto): Promise<APIResult<null>> {
   return api.patch('/users', { nickname });
 }

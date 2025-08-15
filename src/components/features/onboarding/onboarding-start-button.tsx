@@ -1,11 +1,31 @@
 'use client';
 
 import { Button, buttonVariants } from '@/components/ui/button';
+import { toast } from '@/components/ui/toast';
+import { authGuestLogin } from '@/lib/apis/apis';
+import { useUserStore } from '@/lib/stores/user';
+import { SectionType } from '@/types/types';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const OnboardingStartButton = () => {
-  const handleGuestSignIn = () => {
-    // TODO: API 연결
+  const setUser = useUserStore(state => state.setUser);
+  const router = useRouter();
+
+  const handleGuestSignIn = async () => {
+    const { error, data } = await authGuestLogin();
+
+    if (!error) {
+      const preferences = data.sectionPreferences.reduce((acc, c) => {
+        acc.set(c.sectionName, c.preference);
+        return acc;
+      }, new Map()) as unknown as Record<SectionType, number>;
+
+      setUser({ user: data.user, preferences, ...data.tokens });
+      return router.push('/set-nickname?isCreated=true');
+    }
+
+    toast.serverError();
   };
 
   return (
