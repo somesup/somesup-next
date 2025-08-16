@@ -9,7 +9,7 @@ import {
   UpdatePreferencesRequestDto,
   UpdateUserRequestDto,
 } from '@/types/dto';
-import api from './api-config';
+import api, { setCookie } from './api-config';
 
 export const authPhoneRequest = async ({ phoneNumber }: PhoneRequestDto): Promise<APIResult<null>> => {
   return api.post('/auth/phone/request', {
@@ -18,14 +18,28 @@ export const authPhoneRequest = async ({ phoneNumber }: PhoneRequestDto): Promis
 };
 
 export async function authPhoneVerify({ phoneNumber, code }: SignInRequestDto): Promise<APIResult<SignInResponseDto>> {
-  return api.post('/auth/phone/verify', {
+  const response = await api.post('/auth/phone/verify', {
     phoneNumber: phoneNumber.replaceAll('-', ''),
     code,
   });
+  if (response.data) {
+    const { accessToken, refreshToken } = response.data.tokens;
+
+    setCookie('accessToken', accessToken);
+    setCookie('refreshToken', refreshToken);
+  }
+  return response;
 }
 
 export async function authGuestLogin(): Promise<APIResult<SignInResponseDto>> {
-  return api.post('/auth/guest-login');
+  const response = await api.post('/auth/guest-login');
+  if (response.data) {
+    const { accessToken, refreshToken } = response.data.tokens;
+
+    setCookie('accessToken', accessToken);
+    setCookie('refreshToken', refreshToken);
+  }
+  return response;
 }
 
 export async function authUpdateUser({ nickname }: UpdateUserRequestDto): Promise<APIResult<null>> {
