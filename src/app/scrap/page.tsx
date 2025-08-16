@@ -1,14 +1,13 @@
 'use client';
 
-import Image from 'next/image';
 import { useEffect, useState, useRef, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { MdKeyboardArrowLeft } from 'react-icons/md';
 import NewsCard from '@/components/features/news/news-card';
 import { getArticles } from '@/lib/apis/apis';
 import { NewsDto, PaginationDto } from '@/types/dto';
-import { MdKeyboardArrowLeft } from 'react-icons/md';
-import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
 const ScrapListPage = () => {
   const searchParams = useSearchParams();

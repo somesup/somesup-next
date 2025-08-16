@@ -66,7 +66,7 @@ const PressTray = ({ items = [] }: PressTrayProps) => {
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-1">
-              <p className="typography-caption3 text-white/90">원문 기사 보기</p>
+              <p className="text-white/90 typography-caption3">원문 기사 보기</p>
             </div>
 
             <div
