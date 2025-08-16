@@ -16,8 +16,6 @@ const toastIcon: Record<Toast['type'], ReactNode> = {
 
 export const ToastContainer = () => {
   const toasts = useToastStore(state => state.toasts);
-  const promos = toasts.filter(t => t.type === 'promo');
-  const others = toasts.filter(t => t.type !== 'promo');
 
   return (
     <div className="fixed left-1/2 top-0 z-40 flex w-full -translate-x-1/2 flex-col gap-2 p-4 sm:bottom-0 sm:left-auto sm:right-0 sm:top-auto sm:w-[360px] sm:translate-x-0">
