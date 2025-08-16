@@ -119,13 +119,23 @@ const MyPage = () => {
         <section className="mb-8">
           <h2 className="mb-2 typography-body2">자주 접한 키워드</h2>
           <div className="h-52 overflow-hidden rounded-xl bg-[#2E2E2E]">
-            {data?.keywordStats?.length ? (
-              <div className="h-full w-full">
-                <WordCloud height={208} items={data.keywordStats.map(k => ({ keyword: k.keyword, count: k.count }))} />
-              </div>
+            {data ? (
+              data.keywordStats.length > 10 ? (
+                <div className="h-full w-full">
+                  <WordCloud
+                    height={208}
+                    items={data.keywordStats.map(k => ({ keyword: k.keyword, count: k.count }))}
+                  />
+                </div>
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-[url('/images/keyword-bg.png')] bg-cover bg-center bg-no-repeat text-center">
+                  키워드 분석 준비 중입니다.
+                  <br />더 많은 뉴스 시청 기록이 필요해요 !
+                </div>
+              )
             ) : (
               <div className="grid aspect-[16/9] w-full place-items-center tracking-wide typography-body1">
-                {loading ? '불러오는 중...' : '읽은 키워드 없음'}
+                불러오는 중...
               </div>
             )}
           </div>
