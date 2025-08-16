@@ -13,7 +13,7 @@ const SetPreferenceSlider = ({ value, onChange, shouldAnimation }: SetPreference
   const [isAnimating, setIsAnimating] = useState(false);
   const [displayValue, setDisplayValue] = useState(value);
 
-  const snapDelay = 200;
+  const snapDelay = 50;
   const snapValues = [0, 50, 100];
 
   const findNearestSnapValue = useCallback(
@@ -32,7 +32,7 @@ const SetPreferenceSlider = ({ value, onChange, shouldAnimation }: SetPreference
       setIsAnimating(true);
       const startValue = displayValue;
       const difference = targetValue - startValue;
-      const duration = 500;
+      const duration = 200;
       const startTime = Date.now();
 
       const animate = () => {
@@ -147,11 +147,11 @@ const SetPreferenceSlider = ({ value, onChange, shouldAnimation }: SetPreference
       style={{ userSelect: 'none' }}
     >
       <div
-        className={`absolute bottom-0 w-full rounded-full bg-white ${(shouldAnimation || isAnimating) && 'transition-all duration-700 ease-out'}`}
+        className={`absolute bottom-0 w-full rounded-full bg-white ${shouldAnimation && 'transition-all duration-500 ease-out'}`}
         style={{ height: `${displayValue}%` }}
       />
       <div
-        className={`absolute left-1/2 flex h-12 w-6 -translate-x-1/2 transform flex-col items-center justify-center gap-1 rounded-full bg-white shadow-lg ${(shouldAnimation || isAnimating) && 'transition-all duration-700 ease-out'}`}
+        className={`absolute left-1/2 flex h-12 w-6 -translate-x-1/2 transform flex-col items-center justify-center gap-1 rounded-full bg-white shadow-lg ${shouldAnimation && 'transition-all duration-500 ease-out'}`}
         style={{ bottom: `calc(${displayValue}% - 1.5rem)` }}
       >
         <div className="h-0 w-3 border-2 border-[#ececec]" />
