@@ -16,7 +16,6 @@ const HomePage = () => {
   const [currentView, setCurrentView] = useState<'abstract' | 'detail'>('abstract');
   const [isScrolling, setIsScrolling] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [unread, setUnread] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -71,11 +70,8 @@ const HomePage = () => {
   }, [currentIndex, newsList.length, pagination?.hasNext, fetchNews, isLoading]);
 
   useEffect(() => {
-    const u = isDailyUnread();
-    setUnread(u);
-    if (u) {
-      toast.fiveNews();
-    }
+    const unread = isDailyUnread();
+    if (unread) toast.fiveNews();
   }, []);
 
   useEffect(() => {

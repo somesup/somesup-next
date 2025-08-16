@@ -20,22 +20,10 @@ export const ToastContainer = () => {
   const others = toasts.filter(t => t.type !== 'promo');
 
   return (
-    <div>
-      {promos.length > 0 && (
-        <div className="fixed left-1/2 top-0 z-50 w-full max-w-mobile -translate-x-1/2 p-4">
-          {promos.map(t => (
-            <ToastItem key={t.id} {...t} />
-          ))}
-        </div>
-      )}
-
-      {others.length > 0 && (
-        <div className="fixed left-1/2 top-0 z-40 flex w-full -translate-x-1/2 flex-col gap-2 p-4 sm:bottom-0 sm:left-auto sm:right-0 sm:top-auto sm:w-[360px] sm:translate-x-0">
-          {others.map(t => (
-            <ToastItem key={t.id} {...t} />
-          ))}
-        </div>
-      )}
+    <div className="fixed left-1/2 top-0 z-40 flex w-full -translate-x-1/2 flex-col gap-2 p-4 sm:bottom-0 sm:left-auto sm:right-0 sm:top-auto sm:w-[360px] sm:translate-x-0">
+      {toasts.map(t => (
+        <ToastItem key={t.id} {...t} />
+      ))}
     </div>
   );
 };
@@ -73,7 +61,13 @@ export const ToastItem = ({ title, description, type }: Toast) => {
     );
   }
   return (
-    <div className="flex h-[4rem] w-full items-center gap-5 rounded-lg bg-gray-20 px-4">
+    <div
+      className={[
+        'flex h-[4rem] w-full items-center gap-5 rounded-lg bg-gray-20 px-4',
+        'transition-all duration-300 will-change-transform',
+        show ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0',
+      ].join(' ')}
+    >
       {toastIcon[type]}
       <div className="flex h-fit flex-col">
         <p className="typography-body3">{title}</p>
@@ -86,7 +80,7 @@ export const ToastItem = ({ title, description, type }: Toast) => {
 const createToast = (type: Toast['type']) => (title: string, description: string) => {
   const id = crypto.randomUUID();
   useToastStore.getState().add({ type, title, description, id });
-  setTimeout(() => useToastStore.getState().remove(id), type === 'promo' ? 4000 : 3000);
+  setTimeout(() => useToastStore.getState().remove(id), 6000);
 };
 
 export const toast = {
