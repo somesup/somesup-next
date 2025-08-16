@@ -1,8 +1,12 @@
-export const getTodayString = () => {
-  return new Date().toISOString().slice(0, 10);
-};
-
 const KEY = 'news5min:last-visit';
+
+export const getTodayString = () =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date());
 
 export const isDailyUnread = () => {
   try {
