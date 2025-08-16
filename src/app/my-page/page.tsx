@@ -45,6 +45,8 @@ const MyPage = () => {
     return stats.map(s => (s.behaviorScore / 3) * 90);
   }, [data?.sectionStats]);
 
+  console.log(data?.keywordStats);
+
   return (
     <main className="flex h-full w-full max-w-mobile flex-col items-center justify-center bg-gray-10">
       <PageSelector />
@@ -68,7 +70,7 @@ const MyPage = () => {
           >
             <div className="flex items-center gap-3">
               <FaBookmark className="h-5 w-5" />
-              <span className="typography-body1">스크랩 기사</span>
+              <span className="typography-body1">스크랩 목록</span>
             </div>
             <FaChevronRight className="h-5 w-5" />
           </Link>
@@ -80,28 +82,19 @@ const MyPage = () => {
             <div className="p-4">
               <Hexagon
                 hexagons={[
-                  {
-                    radii: prefRadii,
-                    fill: '#FF880060',
-                    stroke: '#FF8800',
-                  },
-                  {
-                    radii: behaviorRadii,
-                    fill: '#AEFF8860',
-                    stroke: '#AEFF88',
-                  },
+                  { radii: prefRadii, fill: '#FF880060', stroke: '#FF8800' },
+                  { radii: behaviorRadii, fill: '#AEFF8860', stroke: '#AEFF88' },
                 ]}
                 width={250}
                 height={250}
-                withLabel
               />
             </div>
             <div className="-mt-2 mb-3 flex items-center gap-5">
-              <span className="typography-caption3 inline-flex items-center gap-2 align-middle">
+              <span className="inline-flex items-center gap-2 align-middle typography-caption3">
                 <FaSquare className="inline-block" color="#AEFF88" />
                 읽은 뉴스
               </span>
-              <span className="typography-caption3 inline-flex items-center gap-2 align-middle">
+              <span className="inline-flex items-center gap-2 align-middle typography-caption3">
                 <FaSquare className="inline-block" color="#FF8800" />
                 선호도
               </span>
@@ -119,13 +112,23 @@ const MyPage = () => {
         <section className="mb-8">
           <h2 className="mb-2 typography-body2">자주 접한 키워드</h2>
           <div className="h-52 overflow-hidden rounded-xl bg-[#2E2E2E]">
-            {data?.keywordStats?.length ? (
-              <div className="h-full w-full">
-                <WordCloud height={208} items={data.keywordStats.map(k => ({ keyword: k.keyword, count: k.count }))} />
-              </div>
+            {data ? (
+              data.keywordStats.length > 10 ? (
+                <div className="h-full w-full">
+                  <WordCloud
+                    height={208}
+                    items={data.keywordStats.map(k => ({ keyword: k.keyword, count: k.count }))}
+                  />
+                </div>
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-[url('/images/keyword-bg.png')] bg-cover bg-center bg-no-repeat text-center">
+                  키워드 분석 준비 중입니다.
+                  <br />더 많은 뉴스 시청 기록이 필요해요 !
+                </div>
+              )
             ) : (
               <div className="grid aspect-[16/9] w-full place-items-center tracking-wide typography-body1">
-                {loading ? '불러오는 중...' : '읽은 키워드 없음'}
+                불러오는 중...
               </div>
             )}
           </div>

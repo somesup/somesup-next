@@ -1,13 +1,15 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { enableMapSet } from 'immer';
 import { useSESStore } from '@/lib/hooks/useSESStore';
 
-import { TokenDto, UserDto } from '@/types/dto';
+import { UserDto } from '@/types/dto';
 import { Expand, SectionPreference, SectionType } from '@/types/types';
-import { useSyncExternalStore } from 'react';
 
-export type User = Expand<{ user: UserDto; preferences: SectionPreference } & TokenDto>;
+enableMapSet();
+
+export type User = Expand<{ user: UserDto; preferences: SectionPreference }>;
 
 export type UserStore = Expand<
   {
@@ -16,15 +18,12 @@ export type UserStore = Expand<
     setNickname: (nickname: string) => void;
     setPreferences: (preferences: SectionPreference) => void;
     setPreference: (section: SectionType, preference: number) => void;
-    setTokens: (tokens: TokenDto) => void;
   } & User
 >;
 
 const initialUser: User = {
   user: { id: -1, phone: '01000000000', nickname: '' },
   preferences: { politics: 1, economy: 1, society: 1, culture: 1, tech: 1, world: 1 },
-  accessToken: '',
-  refreshToken: '',
 };
 
 export const useUserStore = create<UserStore>()(
@@ -39,7 +38,6 @@ export const useUserStore = create<UserStore>()(
         set(state => {
           state.preferences[section] = preference;
         }),
-      setTokens: tokens => set(state => Object.assign(state, tokens)),
     })),
     {
       name: 'user',

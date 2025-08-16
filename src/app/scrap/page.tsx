@@ -7,6 +7,8 @@ import { getArticles } from '@/lib/apis/apis';
 import { NewsDto, PaginationDto } from '@/types/dto';
 import { MdKeyboardArrowLeft } from 'react-icons/md';
 import { useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const ScrapListPage = () => {
   const searchParams = useSearchParams();
@@ -98,7 +100,7 @@ const ScrapListPage = () => {
         <a href="/my-page/scrap" className="absolute left-4 top-1/2 -translate-y-1/2">
           <MdKeyboardArrowLeft size={28} />
         </a>
-        <span>스크랩 기사</span>
+        <span>스크랩 목록</span>
       </div>
       <div
         ref={containerRef}
@@ -119,7 +121,7 @@ const ScrapListPage = () => {
 
         {/* 뉴스 모두 확인 */}
         {!pagination?.hasNext && (
-          <div className="flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 text-center">
+          <div className="relative flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 text-center">
             <p className="typography-sub-title">
               저장한 뉴스를
               <br />
@@ -132,7 +134,12 @@ const ScrapListPage = () => {
               width={280}
               height={280}
             />
-            <p className="!font-normal typography-small-title">벌써 {newsList.length}개의 소식을 읽었어요</p>
+            <Link
+              href="/my-page/scrap"
+              className="absolute bottom-8 flex h-[3.75rem] w-[calc(100%-4rem)] items-center justify-center rounded-lg bg-gray-60 text-gray-10 typography-body1"
+            >
+              스크랩 목록으로 돌아가기
+            </Link>
           </div>
         )}
       </div>

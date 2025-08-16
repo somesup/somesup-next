@@ -1,23 +1,54 @@
 import { APIResult } from '@/types/dto';
-import { useUserStore } from '../stores/user';
 import { camelize } from '../utils/camelize';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const isTokenExpired = (token: string): boolean => {
-  if (!token) return true;
+const getCookie = (name: string): string | null => {
+  if (typeof document === 'undefined') return null;
+
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+};
+
+const getTokenExpiry = (token: string): number | null => {
+  if (!token) return null;
 
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
-    const currentTime = Date.now() / 1000;
-    return payload.exp < currentTime + 300;
+    return payload.exp;
   } catch (error) {
-    return true;
+    return null;
   }
 };
 
+export const setCookie = (name: string, value: string, options: { maxAge?: number; secure?: boolean } = {}) => {
+  const { secure = process.env.NODE_ENV === 'production' } = options;
+
+  let maxAge = options.maxAge;
+  if (!maxAge && (name === 'accessToken' || name === 'refreshToken')) {
+    const expiry = getTokenExpiry(value);
+    if (expiry) {
+      const currentTime = Math.floor(Date.now() / 1000);
+      maxAge = expiry - currentTime;
+    }
+  }
+
+  let cookieString = `${name}=${value}; Path=/; SameSite=Strict`;
+  if (maxAge && maxAge > 0) cookieString += `; Max-Age=${maxAge}`;
+  if (secure) cookieString += '; Secure';
+
+  document.cookie = cookieString;
+};
+
+const deleteCookie = (name: string) => {
+  document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Strict`;
+};
+
 const refreshAccessToken = async (): Promise<string> => {
-  const { refreshToken, setTokens } = useUserStore.getState();
+  const refreshToken = getCookie('refreshToken');
+
   if (!refreshToken) return '';
 
   try {
@@ -29,11 +60,17 @@ const refreshAccessToken = async (): Promise<string> => {
       cache: 'no-store',
     });
 
-    if (!response.ok) return '';
+    if (!response.ok) {
+      deleteCookie('accessToken');
+      deleteCookie('refreshToken');
+      return '';
+    }
 
     const result = await response.json();
 
-    setTokens(result.data);
+    setCookie('accessToken', result.data.accessToken);
+    setCookie('refreshToken', result.data.refreshToken);
+
     return result.data.accessToken;
   } catch (error) {
     console.error(error);
@@ -41,15 +78,12 @@ const refreshAccessToken = async (): Promise<string> => {
   }
 };
 
-const prepareHeaders = async (headers: HeadersInit = {}): Promise<HeadersInit> => {
-  const { accessToken } = useUserStore.getState();
-
-  let currentAccessToken = accessToken;
-  if (currentAccessToken && isTokenExpired(currentAccessToken)) currentAccessToken = await refreshAccessToken();
+const prepareHeaders = (headers: HeadersInit = {}): HeadersInit => {
+  const accessToken = getCookie('accessToken');
 
   return {
     'Content-Type': 'application/json',
-    ...(currentAccessToken && { Authorization: `Bearer ${currentAccessToken}` }),
+    ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     ...headers,
   };
 };
@@ -58,7 +92,7 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
   try {
     const { headers = {}, ...restOptions } = options;
 
-    const preparedHeaders = await prepareHeaders(headers);
+    const preparedHeaders = prepareHeaders(headers);
 
     const defaultOptions: RequestInit = {
       headers: preparedHeaders,
@@ -72,13 +106,15 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
     if (response.status === 401) {
       const newAccessToken = await refreshAccessToken();
 
-      if (!newAccessToken)
+      if (!newAccessToken) {
+        if (typeof window !== 'undefined') window.location.href = '/onboarding';
         return {
           error: { status: 401, message: 'Authentication failed' },
           data: null,
         };
+      }
 
-      const retryHeaders = await prepareHeaders(headers);
+      const retryHeaders = prepareHeaders(headers);
       const retryOptions: RequestInit = {
         ...defaultOptions,
         headers: retryHeaders,
@@ -155,4 +191,5 @@ const api = {
       ...options,
     }),
 };
+
 export default api;

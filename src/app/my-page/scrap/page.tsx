@@ -90,7 +90,7 @@ const ScrapsPage = () => {
           <Link href="/my-page" aria-label="뒤로가기" className="absolute left-4 top-1/2 -translate-y-1/2 rounded p-1">
             <FaChevronLeft className="h-5 w-5" />
           </Link>
-          <h1 className="text-center typography-small-title">스크랩 기사</h1>
+          <h1 className="text-center typography-small-title">스크랩 목록</h1>
         </div>
       </header>
 
