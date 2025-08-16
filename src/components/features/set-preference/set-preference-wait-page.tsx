@@ -1,8 +1,10 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+import { useState } from 'react';
 import { useUserStore } from '@/lib/stores/user';
-import SetPreferenceLottie from './set-preference-lottie';
-import { ReactNode, useState } from 'react';
+
+const SetPreferenceLottie = dynamic(() => import('./set-preference-lottie'));
 
 const comments = [
   (nickname: string) => (
