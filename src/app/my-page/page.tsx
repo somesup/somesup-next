@@ -45,6 +45,8 @@ const MyPage = () => {
     return stats.map(s => (s.behaviorScore / 3) * 90);
   }, [data?.sectionStats]);
 
+  console.log(data?.keywordStats);
+
   return (
     <main className="flex h-full w-full max-w-mobile flex-col items-center justify-center bg-gray-10">
       <PageSelector />
@@ -68,7 +70,7 @@ const MyPage = () => {
           >
             <div className="flex items-center gap-3">
               <FaBookmark className="h-5 w-5" />
-              <span className="typography-body1">스크랩 기사</span>
+              <span className="typography-body1">스크랩 목록</span>
             </div>
             <FaChevronRight className="h-5 w-5" />
           </Link>
@@ -80,28 +82,19 @@ const MyPage = () => {
             <div className="p-4">
               <Hexagon
                 hexagons={[
-                  {
-                    radii: prefRadii,
-                    fill: '#FF880060',
-                    stroke: '#FF8800',
-                  },
-                  {
-                    radii: behaviorRadii,
-                    fill: '#AEFF8860',
-                    stroke: '#AEFF88',
-                  },
+                  { radii: prefRadii, fill: '#FF880060', stroke: '#FF8800' },
+                  { radii: behaviorRadii, fill: '#AEFF8860', stroke: '#AEFF88' },
                 ]}
                 width={250}
                 height={250}
-                withLabel
               />
             </div>
             <div className="-mt-2 mb-3 flex items-center gap-5">
-              <span className="typography-caption3 inline-flex items-center gap-2 align-middle">
+              <span className="inline-flex items-center gap-2 align-middle typography-caption3">
                 <FaSquare className="inline-block" color="#AEFF88" />
                 읽은 뉴스
               </span>
-              <span className="typography-caption3 inline-flex items-center gap-2 align-middle">
+              <span className="inline-flex items-center gap-2 align-middle typography-caption3">
                 <FaSquare className="inline-block" color="#FF8800" />
                 선호도
               </span>
