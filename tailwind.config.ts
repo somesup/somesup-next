@@ -40,7 +40,7 @@ const config: Config = {
         '.typography-main-title': {
           'font-size': '1.75rem' /* 28px */,
           'line-height': '2rem' /* 32px */,
-          'font-weight': '900',
+          'font-weight': '800',
           'letter-spacing': '-0.5px',
         },
         /* 중제목 - Regular 20pt / Line height : 31px */
