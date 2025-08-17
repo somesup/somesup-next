@@ -3,7 +3,7 @@ import { immer } from 'zustand/middleware/immer';
 
 type Toast = {
   id: string;
-  type: 'error' | 'info' | 'success' | 'promo';
+  type: 'error' | 'info' | 'success' | 'promo' | 'scrap';
   title: string;
   description?: string;
 };

@@ -2,13 +2,12 @@ import { Expand, SectionType } from './types';
 
 export type Error = { status: number; message: string };
 export type PaginationDto = {
-  type: 'cursor';
   hasNext: boolean;
-  hasPrev: boolean;
   nextCursor: string | null;
-  prevCursor: string | null;
 };
-export type APIResult<T> = { error: Error; data: null } | { error: null; data: T; pagination?: PaginationDto };
+export type APIResult<T> =
+  | { error: Error; data: null; pagination?: null }
+  | { error: null; data: T; pagination?: PaginationDto };
 
 export type PhoneRequestDto = { phoneNumber: string };
 export type SignInRequestDto = PhoneRequestDto & { code: string };
@@ -69,7 +68,7 @@ export type MyPageDto = {
 };
 
 export type ArticlesRequestDto = {
-  cursor: string;
+  cursor?: string | null;
   limit?: number;
   scraped?: boolean;
   liked?: boolean;

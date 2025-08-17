@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 
 type ViewType = 'abstract' | 'detail';
 
-export const useNewsDrag = () => {
+export const useNewsDrag = (disabled: boolean = false) => {
   const [currentView, setCurrentView] = useState<ViewType>('abstract');
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -26,12 +26,13 @@ export const useNewsDrag = () => {
   };
 
   const handleStart = (clientX: number) => {
+    if (disabled) return;
     setIsDragging(true);
     setStartX(clientX);
   };
 
   const handleMove = (clientX: number) => {
-    if (!isDragging || !isClient) return;
+    if (!isDragging || !isClient || disabled) return;
 
     const deltaX = clientX - startX;
     const containerWidth = getContainerWidth();
@@ -44,7 +45,7 @@ export const useNewsDrag = () => {
   };
 
   const handleEnd = () => {
-    if (!isDragging || !isClient) return;
+    if (!isDragging || !isClient || disabled) return;
     setIsDragging(false);
 
     const containerWidth = getContainerWidth();
@@ -61,6 +62,8 @@ export const useNewsDrag = () => {
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (disabled) return;
+
     const target = e.target as HTMLElement;
     if (target.closest('button')) return;
 
@@ -72,21 +75,27 @@ export const useNewsDrag = () => {
   const handleMouseUp = () => handleEnd();
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (disabled) return;
+
     const target = e.target as HTMLElement;
     if (target.closest('button')) return;
 
     handleStart(e.touches[0].clientX);
   };
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => handleMove(e.touches[0].clientX);
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (disabled) return;
+    handleMove(e.touches[0].clientX);
+  };
 
   const handleTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (disabled) return;
     if (isDragging) e.preventDefault();
     handleEnd();
   };
 
   useEffect(() => {
-    if (isDragging) {
+    if (isDragging && !disabled) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       return () => {
@@ -94,7 +103,7 @@ export const useNewsDrag = () => {
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, startX, currentView, translateX]);
+  }, [isDragging, startX, currentView, translateX, disabled]);
 
   const getProgress = () => {
     if (!isClient) return currentView === 'abstract' ? 0 : 1;
@@ -109,11 +118,13 @@ export const useNewsDrag = () => {
     isClient,
     getProgress,
     switchToView,
-    handlers: {
-      onMouseDown: handleMouseDown,
-      onTouchStart: handleTouchStart,
-      onTouchMove: handleTouchMove,
-      onTouchEnd: handleTouchEnd,
-    },
+    handlers: disabled
+      ? {}
+      : {
+          onMouseDown: handleMouseDown,
+          onTouchStart: handleTouchStart,
+          onTouchMove: handleTouchMove,
+          onTouchEnd: handleTouchEnd,
+        },
   };
 };

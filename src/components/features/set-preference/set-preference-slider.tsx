@@ -113,7 +113,6 @@ const SetPreferenceSlider = ({ value, onChange, shouldAnimation }: SetPreference
   const handleTouchStart = (e: React.TouchEvent) => {
     if (isAnimating) return;
 
-    e.preventDefault();
     setIsDragging(true);
     debouncedSnap.cancel();
     const touch = e.touches[0];

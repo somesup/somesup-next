@@ -31,6 +31,20 @@ const config: Config = {
         error: '#FF7A7C',
         semantic: '#FF3F62',
       },
+      keyframes: {
+        fadeInUp: {
+          from: { opacity: '0', transform: 'translateY(12px) scale(0.95)' },
+          to: { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        modalOpen: {
+          from: { opacity: '0', transform: 'translateY(12px) scale(0.85)' },
+          to: { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+      },
+      animation: {
+        'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+        'modal-open': 'modalOpen 0.3s ease-out forwards',
+      },
     },
   },
   plugins: [
@@ -40,7 +54,7 @@ const config: Config = {
         '.typography-main-title': {
           'font-size': '1.75rem' /* 28px */,
           'line-height': '2rem' /* 32px */,
-          'font-weight': '900',
+          'font-weight': '800',
           'letter-spacing': '-0.5px',
         },
         /* 중제목 - Regular 20pt / Line height : 31px */

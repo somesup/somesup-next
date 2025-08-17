@@ -45,22 +45,18 @@ const MyPage = () => {
     return stats.map(s => (s.behaviorScore / 3) * 90);
   }, [data?.sectionStats]);
 
-  console.log(data?.keywordStats);
-
   return (
     <main className="flex h-full w-full max-w-mobile flex-col items-center justify-center bg-gray-10">
       <PageSelector />
       <div className="w-full px-10 pt-16">
-        <div className="mb-5 flex items-center justify-between">
-          <div className="inline-flex items-baseline gap-2">
-            <p className="typography-sub-title-bold">
-              {nickname}
-              <span className="ml-[0.125rem] typography-body1">님</span>
-            </p>
-            <Link href="/set-nickname" className="inline-block">
-              <RiPencilFill className="h-4 w-4" />
-            </Link>
-          </div>
+        <div className="mb-5 flex items-center gap-2">
+          <p className="typography-sub-title-bold">
+            {nickname}
+            <span className="ml-[0.125rem] typography-body1">님</span>
+          </p>
+          <Link href="/set-nickname">
+            <RiPencilFill className="h-5 w-5" />
+          </Link>
         </div>
 
         <div className="mb-5">

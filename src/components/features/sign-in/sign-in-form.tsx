@@ -53,7 +53,7 @@ const SignInForm = () => {
         return acc;
       }, new Map()) as unknown as Record<SectionType, number>;
 
-      setUser({ user: data.user, preferences, ...data.tokens });
+      setUser({ user: data.user, preferences });
       if (data.isCreated) return router.push('/set-nickname?isCreated=true');
       else return router.push('/');
     }

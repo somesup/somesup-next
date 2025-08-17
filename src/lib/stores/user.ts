@@ -1,13 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { immer } from 'zustand/middleware/immer';
-import { enableMapSet } from 'immer';
 import { useSESStore } from '@/lib/hooks/useSESStore';
 
 import { UserDto } from '@/types/dto';
 import { Expand, SectionPreference, SectionType } from '@/types/types';
-
-enableMapSet();
 
 export type User = Expand<{ user: UserDto; preferences: SectionPreference }>;
 
@@ -28,20 +24,30 @@ const initialUser: User = {
 
 export const useUserStore = create<UserStore>()(
   persist(
-    immer(set => ({
+    set => ({
       ...initialUser,
       setUser: user => set(() => user),
       resetUser: () => set(() => initialUser),
-      setNickname: nickname => set(state => void (state.user.nickname = nickname)),
-      setPreferences: sectionPreferences => set(state => void (state.preferences = sectionPreferences)),
+      setNickname: nickname =>
+        set(state => ({
+          ...state,
+          user: { ...state.user, nickname },
+        })),
+      setPreferences: sectionPreferences =>
+        set(state => ({
+          ...state,
+          preferences: sectionPreferences,
+        })),
       setPreference: (section, preference) =>
-        set(state => {
-          state.preferences[section] = preference;
-        }),
-    })),
-    {
-      name: 'user',
-    },
+        set(state => ({
+          ...state,
+          preferences: {
+            ...state.preferences,
+            [section]: preference,
+          },
+        })),
+    }),
+    { name: 'user' },
   ),
 );
 
