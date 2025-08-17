@@ -12,11 +12,12 @@ type NewsCardProps = {
   news: NewsDto;
   active: boolean;
   onViewChange?: (view: 'abstract' | 'detail') => void;
+  disableHorizontalDrag?: boolean;
 };
 
-const NewsCard = ({ news, active, onViewChange }: NewsCardProps) => {
+const NewsCard = ({ news, active, onViewChange, disableHorizontalDrag = false }: NewsCardProps) => {
   const [isSent, setIsSent] = useState({ view: false, detail: false });
-  const { currentView, isDragging, containerRef, handlers, getProgress } = useNewsDrag();
+  const { currentView, isDragging, containerRef, handlers, getProgress } = useNewsDrag(disableHorizontalDrag);
 
   const progress = getProgress();
   const detailTranslateX = (1 - progress) * (containerRef.current?.offsetWidth || window.innerWidth);
@@ -52,11 +53,13 @@ const NewsCard = ({ news, active, onViewChange }: NewsCardProps) => {
       {/* content */}
       <div
         ref={containerRef}
-        className="relative h-full cursor-grab touch-pan-x overscroll-x-none active:cursor-grabbing"
+        className={`relative h-full touch-pan-x overscroll-x-none ${
+          disableHorizontalDrag ? 'pointer-events-none' : 'cursor-grab active:cursor-grabbing'
+        }`}
         style={{
-          touchAction: currentView === 'detail' ? 'pan-y' : 'pan-x',
+          touchAction: currentView === 'detail' ? 'pan-y' : disableHorizontalDrag ? 'none' : 'pan-x',
         }}
-        {...handlers}
+        {...(disableHorizontalDrag ? {} : handlers)}
       >
         <div className="absolute inset-0" style={{ opacity }}>
           <NewsAbstractView {...news} />

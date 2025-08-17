@@ -17,12 +17,19 @@ const HomePage = () => {
   const [isScrolling, setIsScrolling] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isTouching, setIsTouching] = useState(false);
+
+  const [swipeDirection, setSwipeDirection] = useState<'vertical' | 'horizontal' | null>(null);
+  const [touchLocked, setTouchLocked] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
   const touchStartY = useRef<number>(0);
   const touchCurrentY = useRef<number>(0);
+  const touchStartX = useRef<number>(0);
+  const touchCurrentX = useRef<number>(0);
   const initialScrollTop = useRef<number>(0);
   const cardHeight = useRef<number>(0);
+  const swipeThreshold = 10;
 
   const scrollToIndex = useCallback((index: number, behavior: 'instant' | 'smooth' = 'instant') => {
     if (!containerRef.current) return;
@@ -95,8 +102,13 @@ const HomePage = () => {
       if (currentView === 'detail') return;
 
       setIsTouching(true);
+      setSwipeDirection(null);
+      setTouchLocked(false);
+
       touchStartY.current = e.touches[0].clientY;
       touchCurrentY.current = e.touches[0].clientY;
+      touchStartX.current = e.touches[0].clientX;
+      touchCurrentX.current = e.touches[0].clientX;
       initialScrollTop.current = containerRef.current?.scrollTop || 0;
 
       if (containerRef.current) containerRef.current.style.scrollSnapType = 'none';
@@ -108,19 +120,44 @@ const HomePage = () => {
     (e: TouchEvent) => {
       if (currentView === 'detail' || !isTouching) return;
 
-      e.preventDefault();
-
       touchCurrentY.current = e.touches[0].clientY;
-      const deltaY = touchStartY.current - touchCurrentY.current;
+      touchCurrentX.current = e.touches[0].clientX;
 
-      const amplifiedDelta = deltaY * 1.5;
+      const deltaY = Math.abs(touchStartY.current - touchCurrentY.current);
+      const deltaX = Math.abs(touchStartX.current - touchCurrentX.current);
 
-      const newScrollTop = Math.max(0, initialScrollTop.current + amplifiedDelta);
-      const maxScrollTop = Math.max(0, (newsList.length - 1) * cardHeight.current);
-      const clampedScrollTop = Math.min(newScrollTop, maxScrollTop);
-      if (containerRef.current) containerRef.current.scrollTop = clampedScrollTop;
+      if (!swipeDirection && (deltaY > swipeThreshold || deltaX > swipeThreshold)) {
+        if (deltaY > deltaX) {
+          setSwipeDirection('vertical');
+          setTouchLocked(false);
+        } else {
+          setSwipeDirection('horizontal');
+          setTouchLocked(true);
+          return;
+        }
+      }
+
+      if (swipeDirection === 'horizontal' || touchLocked) {
+        e.preventDefault();
+        return;
+      }
+
+      if (swipeDirection === 'vertical') {
+        e.preventDefault();
+
+        const verticalDelta = touchStartY.current - touchCurrentY.current;
+        const amplifiedDelta = verticalDelta * 1.5;
+
+        const newScrollTop = Math.max(0, initialScrollTop.current + amplifiedDelta);
+        const maxScrollTop = Math.max(0, (newsList.length - 1) * cardHeight.current);
+        const clampedScrollTop = Math.min(newScrollTop, maxScrollTop);
+
+        if (containerRef.current) {
+          containerRef.current.scrollTop = clampedScrollTop;
+        }
+      }
     },
-    [currentView, isTouching, newsList.length],
+    [currentView, isTouching, newsList.length, swipeDirection, touchLocked],
   );
 
   const handleTouchEnd = useCallback(
@@ -128,6 +165,15 @@ const HomePage = () => {
       if (currentView === 'detail' || !isTouching) return;
 
       setIsTouching(false);
+
+      if (swipeDirection === 'horizontal' || touchLocked) {
+        setSwipeDirection(null);
+        setTouchLocked(false);
+        if (containerRef.current) {
+          containerRef.current.style.scrollSnapType = 'y mandatory';
+        }
+        return;
+      }
 
       if (containerRef.current) containerRef.current.style.scrollSnapType = 'y mandatory';
 
@@ -154,8 +200,21 @@ const HomePage = () => {
       setCurrentIndex(targetIndex);
 
       if (targetIndex >= newsList.length - 5 && pagination?.hasNext && !isLoading) fetchNews();
+
+      setSwipeDirection(null);
+      setTouchLocked(false);
     },
-    [currentView, isTouching, newsList.length, scrollToIndex, pagination?.hasNext, fetchNews, isLoading],
+    [
+      currentView,
+      isTouching,
+      newsList.length,
+      scrollToIndex,
+      pagination?.hasNext,
+      fetchNews,
+      isLoading,
+      swipeDirection,
+      touchLocked,
+    ],
   );
 
   useEffect(() => {
@@ -216,18 +275,21 @@ const HomePage = () => {
       >
         {newsList.map((news, index) => (
           <div key={news.id} className="h-screen w-full flex-shrink-0 snap-start snap-always">
-            <NewsCard news={news} active={currentIndex === index} onViewChange={setCurrentView} />
+            <NewsCard
+              news={news}
+              active={currentIndex === index}
+              onViewChange={setCurrentView}
+              disableHorizontalDrag={swipeDirection === 'vertical'}
+            />
           </div>
         ))}
 
-        {/* 로딩 인디케이터 */}
-        {!!isLoading && (
+        {isLoading && (
           <div className="flex h-full w-full snap-start snap-always items-center justify-center">
             <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
           </div>
         )}
 
-        {/* 뉴스 모두 확인 */}
         {!pagination?.hasNext && newsList.length > 0 && (
           <div className="flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 text-center">
             <p className="typography-sub-title">
