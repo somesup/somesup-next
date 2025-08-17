@@ -29,7 +29,7 @@ const NewsProvider = ({ providers }: NewsProviderProps) => {
   const modalContent = (
     <>
       {open && (
-        <div className="fixed inset-0 z-[100] mx-auto max-w-mobile">
+        <div className="fixed inset-0 z-50 mx-auto max-w-mobile">
           {/* 배경 오버레이 */}
           <div
             className={`absolute inset-0 transition-opacity duration-300 ${!isClosing ? 'opacity-100' : 'opacity-0'}`}
@@ -83,7 +83,7 @@ const NewsProvider = ({ providers }: NewsProviderProps) => {
       <button
         aria-label="뉴스사 목록 열기"
         onClick={() => setOpen(true)}
-        className={`relative z-[60] transition-all duration-300 ease-out ${
+        className={`relative transition-all duration-300 ease-out ${
           open ? 'scale-90 opacity-0' : 'scale-100 opacity-100'
         } active:scale-95`}
         style={{ background: 'transparent', padding: 0 }}

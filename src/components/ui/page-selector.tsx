@@ -47,7 +47,7 @@ const PageSelector = ({ style }: { style?: CSSProperties }) => {
     <>
       {isVisible && <div onClick={handleClose} className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xl" />}
 
-      <div className="fixed left-1/2 top-5 z-50 -translate-x-1/2" style={style}>
+      <div className="fixed left-1/2 top-5 z-40 -translate-x-1/2" style={style}>
         <div className="relative">
           <button
             onClick={() => setIsOpen(prev => !prev)}

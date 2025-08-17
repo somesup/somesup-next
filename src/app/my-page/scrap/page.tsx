@@ -9,7 +9,7 @@ import type { NewsDto } from '@/types/dto';
 import { GoBookmarkFill } from 'react-icons/go';
 
 const ScrapsPage = () => {
-  const { items, loading, hasNext, sentinelRef, isEmpty, isLastPage } = useInfiniteScroll<NewsDto>({
+  const { items, loading, sentinelRef, isEmpty, isLastPage } = useInfiniteScroll<NewsDto>({
     fetcher: (cursor: string) => getArticles({ cursor, limit: 8, scraped: true }),
   });
 
