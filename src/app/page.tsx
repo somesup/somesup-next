@@ -17,6 +17,8 @@ const HomePage = () => {
   const [isScrolling, setIsScrolling] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isTouching, setIsTouching] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [pendingIndex, setPendingIndex] = useState<number | null>(null);
 
   const [swipeDirection, setSwipeDirection] = useState<'vertical' | 'horizontal' | null>(null);
   const [touchLocked, setTouchLocked] = useState(false);
@@ -29,15 +31,47 @@ const HomePage = () => {
   const touchCurrentX = useRef<number>(0);
   const initialScrollTop = useRef<number>(0);
   const cardHeight = useRef<number>(0);
+  const animationFrameRef = useRef<number>();
+  const isProcessingSwipe = useRef<boolean>(false);
   const swipeThreshold = 10;
 
-  const scrollToIndex = useCallback((index: number, behavior: 'instant' | 'smooth' = 'instant') => {
-    if (!containerRef.current) return;
-    containerRef.current.scrollTo({
-      top: index * cardHeight.current,
-      behavior,
-    });
-  }, []);
+  const scrollToIndex = useCallback(
+    (index: number, behavior: 'instant' | 'smooth' = 'instant') => {
+      if (!containerRef.current) return;
+
+      if (isAnimating && behavior === 'smooth') {
+        setPendingIndex(index);
+        return;
+      }
+
+      setIsAnimating(behavior === 'smooth');
+
+      containerRef.current.scrollTo({
+        top: index * cardHeight.current,
+        behavior,
+      });
+
+      if (behavior === 'smooth') {
+        const checkScrollComplete = () => {
+          const currentScrollTop = containerRef.current?.scrollTop || 0;
+          const targetScrollTop = index * cardHeight.current;
+
+          if (Math.abs(currentScrollTop - targetScrollTop) < 1) {
+            setIsAnimating(false);
+            if (pendingIndex !== null) {
+              const nextIndex = pendingIndex;
+              setPendingIndex(null);
+              setTimeout(() => scrollToIndex(nextIndex, 'smooth'), 50);
+            }
+          } else {
+            animationFrameRef.current = requestAnimationFrame(checkScrollComplete);
+          }
+        };
+        animationFrameRef.current = requestAnimationFrame(checkScrollComplete);
+      }
+    },
+    [isAnimating, pendingIndex],
+  );
 
   const updateCardHeight = useCallback(() => {
     cardHeight.current = window.innerHeight;
@@ -76,7 +110,7 @@ const HomePage = () => {
   );
 
   const handleScroll = useCallback(() => {
-    if (!containerRef.current || isLoading || isTouching) return;
+    if (!containerRef.current || isLoading || isTouching || isAnimating) return;
 
     setIsScrolling(true);
     if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
@@ -95,11 +129,11 @@ const HomePage = () => {
         fetchNews();
       }
     }, 100);
-  }, [currentIndex, newsList.length, pagination?.hasNext, fetchNews, isLoading, isTouching]);
+  }, [currentIndex, newsList.length, pagination?.hasNext, fetchNews, isLoading, isTouching, isAnimating]);
 
   const handleTouchStart = useCallback(
     (e: TouchEvent) => {
-      if (currentView === 'detail') return;
+      if (currentView === 'detail' || isAnimating || isProcessingSwipe.current) return;
 
       setIsTouching(true);
       setSwipeDirection(null);
@@ -111,14 +145,19 @@ const HomePage = () => {
       touchCurrentX.current = e.touches[0].clientX;
       initialScrollTop.current = containerRef.current?.scrollTop || 0;
 
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+
+      setIsAnimating(false);
+      setPendingIndex(null);
+
       if (containerRef.current) containerRef.current.style.scrollSnapType = 'none';
     },
-    [currentView],
+    [currentView, isAnimating],
   );
 
   const handleTouchMove = useCallback(
     (e: TouchEvent) => {
-      if (currentView === 'detail' || !isTouching) return;
+      if (currentView === 'detail' || !isTouching || isProcessingSwipe.current) return;
 
       touchCurrentY.current = e.touches[0].clientY;
       touchCurrentX.current = e.touches[0].clientX;
@@ -162,13 +201,15 @@ const HomePage = () => {
 
   const handleTouchEnd = useCallback(
     (e: TouchEvent) => {
-      if (currentView === 'detail' || !isTouching) return;
+      if (currentView === 'detail' || !isTouching || isProcessingSwipe.current) return;
 
+      isProcessingSwipe.current = true;
       setIsTouching(false);
 
       if (swipeDirection === 'horizontal' || touchLocked) {
         setSwipeDirection(null);
         setTouchLocked(false);
+        isProcessingSwipe.current = false;
         if (containerRef.current) {
           containerRef.current.style.scrollSnapType = 'y mandatory';
         }
@@ -196,13 +237,21 @@ const HomePage = () => {
 
       targetIndex = Math.max(0, Math.min(targetIndex, newsList.length - 1));
 
-      scrollToIndex(targetIndex, 'smooth');
-      setCurrentIndex(targetIndex);
+      setTimeout(() => {
+        scrollToIndex(targetIndex, 'smooth');
+        setCurrentIndex(targetIndex);
 
-      if (targetIndex >= newsList.length - 5 && pagination?.hasNext && !isLoading) fetchNews();
+        if (targetIndex >= newsList.length - 5 && pagination?.hasNext && !isLoading) {
+          fetchNews();
+        }
 
-      setSwipeDirection(null);
-      setTouchLocked(false);
+        setSwipeDirection(null);
+        setTouchLocked(false);
+
+        setTimeout(() => {
+          isProcessingSwipe.current = false;
+        }, 100);
+      }, 50);
     },
     [
       currentView,
@@ -231,6 +280,10 @@ const HomePage = () => {
   useEffect(() => {
     const unread = isDailyUnread();
     if (unread) toast.fiveNews();
+
+    return () => {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -238,18 +291,23 @@ const HomePage = () => {
     if (!container) return;
 
     container.addEventListener('scroll', handleScroll, { passive: true });
-    container.addEventListener('touchstart', handleTouchStart, { passive: true });
-    container.addEventListener('touchmove', handleTouchMove, { passive: false });
-    container.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    if (currentView !== 'detail') {
+      container.addEventListener('touchstart', handleTouchStart, { passive: true });
+      container.addEventListener('touchmove', handleTouchMove, { passive: false });
+      container.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
 
     return () => {
       container.removeEventListener('scroll', handleScroll);
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
+      if (currentView !== 'detail') {
+        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('touchmove', handleTouchMove);
+        container.removeEventListener('touchend', handleTouchEnd);
+      }
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     };
-  }, [handleScroll, handleTouchStart, handleTouchMove, handleTouchEnd]);
+  }, [handleScroll, handleTouchStart, handleTouchMove, handleTouchEnd, currentView]);
 
   useEffect(() => {
     fetchNews(true);
