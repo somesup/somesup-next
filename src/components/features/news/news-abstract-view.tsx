@@ -1,16 +1,17 @@
 import { MouseEvent, useState } from 'react';
+import Image from 'next/image';
 import { GoBookmark } from 'react-icons/go';
 import { GoBookmarkFill } from 'react-icons/go';
 import { GoHeartFill } from 'react-icons/go';
 import { GoHeart } from 'react-icons/go';
-import { deleteArticleLike, deleteArticleScrap, postArticleLike, postArticleScrap } from '@/lib/apis/apis';
-import { NewsDto } from '@/types/dto';
 import NewsProvider from './news-provider';
 import { toast } from '@/components/ui/toast';
+import { deleteArticleLike, deleteArticleScrap, postArticleLike, postArticleScrap } from '@/lib/apis/apis';
+import { NewsDto } from '@/types/dto';
 
 type NewsAbstractViewProps = Pick<
   NewsDto,
-  'id' | 'title' | 'oneLineSummary' | 'section' | 'like' | 'scrap' | 'providers'
+  'id' | 'title' | 'oneLineSummary' | 'section' | 'like' | 'scrap' | 'providers' | 'thumbnailUrl'
 >;
 
 const NewsAbstractView = (news: NewsAbstractViewProps) => {
@@ -58,9 +59,21 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
   };
 
   return (
-    <section className="relative h-full w-full flex-shrink-0 overflow-hidden transition-opacity duration-300">
-      <div className="absolute bottom-0 px-8 pb-8">
-        <div className="flex justify-between gap-4">
+    <section className="relative h-full w-full overflow-hidden transition-opacity duration-300">
+      {/* background image */}
+      <div className="absolute flex h-full w-full items-center pb-[14rem] pt-14">
+        <div
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${news.thumbnailUrl})` }}
+        />
+        <div className="absolute -inset-2 -z-10 backdrop-blur-3xl" />
+        <div className="absolute top-0 h-full w-full bg-[linear-gradient(to_bottom,black_0%,transparent_25%,transparent_50%,black_100%)]" />
+        <Image width={500} height={500} alt={news.title} src={news.thumbnailUrl} priority={true} />
+      </div>
+
+      {/* content */}
+      <div className="absolute bottom-0 w-full px-8 pb-8">
+        <div className="flex items-baseline justify-between gap-4">
           <div>
             <span className="rounded-xl border border-gray-60 px-1.5 py-0.5 typography-caption">
               {news.section.friendlyName}
@@ -80,7 +93,7 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
         <hr className="my-4" />
         <p className="line-clamp-3 break-keep typography-body2">{news.oneLineSummary}</p>
         <div className="text-right">
-          <NewsProvider items={news.providers} />
+          <NewsProvider providers={news.providers} />
         </div>
       </div>
     </section>

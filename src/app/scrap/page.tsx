@@ -1,149 +1,94 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useCallback } from 'react';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import NewsAbstractView from '@/components/features/news/news-abstract-view';
+import NewsDetailView from '@/components/features/news/news-detail-view';
+import PageSelector from '@/components/ui/page-selector';
+import { postArticleEvent } from '@/lib/apis/apis';
+import useFetchArticles from '@/lib/hooks/useFetchArticles';
+import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
 import Link from 'next/link';
-import { MdKeyboardArrowLeft } from 'react-icons/md';
-import NewsCard from '@/components/features/news/news-card';
-import { getArticles } from '@/lib/apis/apis';
-import { NewsDto, PaginationDto } from '@/types/dto';
 
 const ScrapListPage = () => {
   const searchParams = useSearchParams();
+  const cursor = getCursorByIndex(searchParams.get('index'));
 
-  const [newsList, setNewsList] = useState<NewsDto[]>([]);
-  const [pagination, setPagination] = useState<PaginationDto | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentView, setCurrentView] = useState<'abstract' | 'detail'>('abstract');
-  const [isScrolling, setIsScrolling] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
-
-  const scrollToIndex = useCallback((index: number) => {
-    if (!containerRef.current) return;
-    containerRef.current.scrollTo({ top: index * window.innerHeight, behavior: 'instant' });
-  }, []);
-
-  const fetchNews = useCallback(async () => {
-    if (isLoading) return;
-
-    try {
-      setIsLoading(true);
-      const prevLength = newsList.length;
-
-      const result = await getArticles({ cursor: pagination?.nextCursor || '', scraped: true });
-      if (result.error) return console.error('Failed to fetch articles:', result.error);
-
-      setNewsList(prev => [...prev, ...result.data]);
-      setPagination(result.pagination || null);
-
-      setTimeout(() => {
-        scrollToIndex(prevLength);
-        setCurrentIndex(prevLength);
-      }, 100);
-    } catch (error) {
-      console.error('Error fetching articles:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [pagination?.nextCursor, newsList.length, isLoading, scrollToIndex]);
-
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current || isLoading) return;
-
-    setIsScrolling(true);
-    if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-
-    scrollTimeoutRef.current = setTimeout(() => {
-      setIsScrolling(false);
-
-      const scrollTop = containerRef.current?.scrollTop || 0;
-      const cardHeight = window.innerHeight;
-      const newIndex = Math.round(scrollTop / cardHeight);
-
-      if (newIndex === currentIndex) return;
-
-      setCurrentIndex(newIndex);
-
-      if (newIndex >= newsList.length - 5 && pagination?.hasNext && !isLoading) fetchNews();
-    }, 100);
-  }, [currentIndex, newsList.length, pagination?.hasNext, fetchNews, isLoading]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-    };
-  }, [handleScroll]);
-
-  useEffect(() => {
-    const numberRegex = /^\d$/;
-    const indexString = searchParams.get('index') || '0';
-    const index = numberRegex.test(indexString) ? parseInt(indexString) : 0;
-    const cursor = btoa(`{"idx":${index + 1}}`);
-    setPagination({ nextCursor: cursor, prevCursor: null, hasNext: true, hasPrev: false, type: 'cursor' });
-    fetchNews();
-  }, []);
+  const { articles, isLoading, pagination } = useFetchArticles({ cursor, scraped: true });
+  const { currentIndex, xTransform, yScroll, handlers } = useSwipeGestures({
+    itemsLength: articles.length + 1,
+    onItemChange: useCallback((index: number) => postArticleEvent(articles[index]?.id, 'VIEW'), [articles]),
+    onDetailToggle: useCallback(
+      (index: number, isDetail: boolean) => isDetail && postArticleEvent(articles[index]?.id, 'DETAIL_VIEW'),
+      [articles],
+    ),
+  });
 
   return (
-    <div className="fixed h-full w-full max-w-mobile">
-      <div
-        className={`fixed left-1/2 top-5 z-50 flex w-full max-w-mobile -translate-x-1/2 justify-center ${currentView === 'abstract' ? 'opacity-100' : 'opacity-0'}`}
-      >
-        <a href="/my-page/scrap" className="absolute left-4 top-1/2 -translate-y-1/2">
-          <MdKeyboardArrowLeft size={28} />
-        </a>
-        <span>스크랩 목록</span>
-      </div>
-      <div
-        ref={containerRef}
-        className={`h-full w-full snap-y snap-mandatory overscroll-none ${isScrolling ? 'scroll-auto' : 'scroll-smooth'} ${currentView === 'detail' ? 'overflow-y-hidden' : 'overflow-y-auto'} `}
-      >
-        {newsList.map((news, index) => (
-          <div key={news.id} className="h-screen w-full flex-shrink-0 snap-start snap-always">
-            <NewsCard news={news} active={currentIndex === index} onViewChange={setCurrentView} />
-          </div>
-        ))}
+    <div className="relative h-screen w-full overflow-hidden bg-black">
+      <PageSelector style={{ opacity: xTransform / 100 }} />
 
-        {/* 로딩 인디케이터 */}
-        {!!pagination?.hasNext && (
-          <div className="flex h-full w-full snap-start snap-always items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
-          </div>
-        )}
+      {/* 메인 컨테이너 */}
+      <div className="relative h-full w-full select-none" {...handlers}>
+        {/* Abstract Views Container */}
+        <div
+          className="absolute inset-0 transition-transform duration-300 ease-out"
+          style={{ transform: `translateY(-${yScroll}px)` }}
+        >
+          {articles.map(item => (
+            <NewsAbstractView key={item.id} {...item} />
+          ))}
 
-        {/* 뉴스 모두 확인 */}
-        {!pagination?.hasNext && (
-          <div className="relative flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 text-center">
-            <p className="typography-sub-title">
-              저장한 뉴스를
-              <br />
-              모두 확인했어요 !
-            </p>
-            <Image
-              className="aspect-square w-[17.5rem]"
-              src="/images/thumbs-up.png"
-              alt="thumbs-up"
-              width={280}
-              height={280}
-            />
-            <Link
-              href="/my-page/scrap"
-              className="absolute bottom-8 flex h-[3.75rem] w-[calc(100%-4rem)] items-center justify-center rounded-lg bg-gray-60 text-gray-10 typography-body1"
-            >
-              스크랩 목록으로 돌아가기
-            </Link>
-          </div>
-        )}
+          {/* 로딩 인디케이터 */}
+          {isLoading && (
+            <div className="flex h-full w-full snap-start snap-always items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
+            </div>
+          )}
+
+          {/* 뉴스 모두 확인 */}
+          {!pagination?.hasNext && (
+            <div className="relative flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 text-center">
+              <p className="typography-sub-title">
+                저장한 뉴스를
+                <br />
+                모두 확인했어요 !
+              </p>
+              <Image
+                className="aspect-square w-[17.5rem]"
+                src="/images/thumbs-up.png"
+                alt="thumbs-up"
+                width={280}
+                height={280}
+              />
+              <Link
+                href="/my-page/scrap"
+                className="absolute bottom-8 flex h-[3.75rem] w-[calc(100%-4rem)] items-center justify-center rounded-lg bg-gray-60 text-gray-10 typography-body1"
+              >
+                스크랩 목록으로 돌아가기
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Detail View */}
+        <div
+          className="absolute inset-0 transform transition-transform duration-300 ease-out"
+          style={{ transform: `translateX(${xTransform}%)` }}
+        >
+          <NewsDetailView fullSummary={articles[currentIndex]?.fullSummary} />
+        </div>
       </div>
     </div>
   );
 };
 
 export default ScrapListPage;
+
+const getCursorByIndex = (index: string | null) => {
+  const numberRegex = /^\d$/;
+  const indexString = index || '0';
+  const idx = numberRegex.test(indexString) ? parseInt(indexString) : 0;
+  return btoa(`{"idx":${idx + 1}}`);
+};

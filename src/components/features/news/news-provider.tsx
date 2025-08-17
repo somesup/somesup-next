@@ -1,21 +1,19 @@
 'use client';
 
-import { useMemo, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { NewsProviderDto } from '@/types/dto';
 
-type NewsProviderProps = { items: NewsProviderDto[] };
-type LogoProps = { item: NewsProviderDto; size: number };
+type NewsProviderProps = { providers: NewsProviderDto[] };
+type LogoProps = { provider: NewsProviderDto; size: number };
 
 const COLLAPSED_SIZE = 24;
 const EXPANDED_SIZE = 60;
 
-const NewsProvider = ({ items = [] }: NewsProviderProps) => {
+const NewsProvider = ({ providers }: NewsProviderProps) => {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const list = useMemo(() => (Array.isArray(items) ? items : []), [items]);
-  const top3 = list.slice(0, 3);
 
   const close = () => {
     setIsClosing(true);
@@ -31,12 +29,10 @@ const NewsProvider = ({ items = [] }: NewsProviderProps) => {
   const modalContent = (
     <>
       {open && (
-        <>
+        <div className="fixed inset-0 z-[100] mx-auto max-w-mobile">
           {/* 배경 오버레이 */}
           <div
-            className={`fixed inset-0 z-[9998] transition-opacity duration-300 ${
-              !isClosing ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`absolute inset-0 transition-opacity duration-300 ${!isClosing ? 'opacity-100' : 'opacity-0'}`}
             onClick={close}
             onTouchEnd={close}
             style={{ background: '#1717176B' }}
@@ -44,24 +40,11 @@ const NewsProvider = ({ items = [] }: NewsProviderProps) => {
 
           {/* 모달 컨텐츠 */}
           <div
-            className={`fixed z-[9999] transform rounded-2xl p-3 transition-all duration-300 ease-out ${
-              !isClosing ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-90 opacity-0'
-            }`}
-            style={{
-              ['--g' as any]: '32px',
-              left: 'var(--g)',
-              right: 'var(--g)',
-              bottom: '48px',
-              background: '#2b2b2b',
-              backdropFilter: 'blur(4px)',
-              transformOrigin: '50% 100%',
-              ...(open && !isClosing
-                ? {}
-                : {
-                    transform: 'translateY(12px) scale(0.85)',
-                    opacity: 0,
-                  }),
-            }}
+            className={[
+              'absolute transform rounded-2xl p-3 transition-all duration-300 ease-out',
+              !isClosing ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-75 opacity-0',
+              'bottom-8 left-8 right-8 origin-[50%_100%] bg-[#2b2b2b]',
+            ].join(' ')}
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-1">
@@ -83,14 +66,14 @@ const NewsProvider = ({ items = [] }: NewsProviderProps) => {
                 maskImage: 'linear-gradient(90deg, transparent 0, #000 8px, #000 calc(100% - 8px), transparent 100%)',
               }}
             >
-              {list.map(it => (
-                <div key={it.id}>
-                  <LogoLink item={it} size={EXPANDED_SIZE} />
+              {providers.map(provider => (
+                <div key={provider.id}>
+                  <LogoLink provider={provider} size={EXPANDED_SIZE} />
                 </div>
               ))}
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );
@@ -106,8 +89,8 @@ const NewsProvider = ({ items = [] }: NewsProviderProps) => {
         style={{ background: 'transparent', padding: 0 }}
       >
         <div className="flex -space-x-3">
-          {top3.map(it => (
-            <LogoBubble key={it.id} item={it} size={COLLAPSED_SIZE} />
+          {providers.slice(0, 3).map(provider => (
+            <LogoBubble key={provider.id} provider={provider} size={COLLAPSED_SIZE} />
           ))}
         </div>
       </button>
@@ -117,12 +100,12 @@ const NewsProvider = ({ items = [] }: NewsProviderProps) => {
   );
 };
 
-const LogoBubble = ({ item, size }: LogoProps) => {
+const LogoBubble = ({ provider, size }: LogoProps) => {
   return (
     <div
       className="inline-block overflow-hidden rounded-full bg-cover bg-center bg-no-repeat"
       style={{
-        backgroundImage: `url(${item.logoUrl})`,
+        backgroundImage: `url(${provider.logoUrl})`,
         width: size,
         height: size,
       }}
@@ -130,17 +113,17 @@ const LogoBubble = ({ item, size }: LogoProps) => {
   );
 };
 
-const LogoLink = ({ item, size }: LogoProps) => {
+const LogoLink = ({ provider, size }: LogoProps) => {
   const tileWidth = size + 4;
   return (
     <a
-      href={item.newsUrl}
+      href={provider.newsUrl}
       target="_blank"
       rel="noopener noreferrer"
       className="group flex shrink-0 flex-col items-center gap-1 transition-transform duration-200 hover:scale-105"
       style={{ width: tileWidth }}
     >
-      <LogoBubble item={item} size={size} />
+      <LogoBubble provider={provider} size={size} />
     </a>
   );
 };

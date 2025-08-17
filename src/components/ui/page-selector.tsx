@@ -1,8 +1,9 @@
 'use client';
-import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdFiberManualRecord } from 'react-icons/md';
-import { useState, useEffect } from 'react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect, ComponentProps, CSSProperties } from 'react';
+import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdFiberManualRecord } from 'react-icons/md';
 import { isDailyUnread } from '@/lib/utils/news-daily';
 
 type Page = { href: string; label: string };
@@ -13,7 +14,7 @@ const pages: Page[] = [
   { href: '/my-page', label: '마이페이지' },
 ];
 
-const PageSelector = () => {
+const PageSelector = ({ style }: { style?: CSSProperties }) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -46,11 +47,11 @@ const PageSelector = () => {
     <>
       {isVisible && <div onClick={handleClose} className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xl" />}
 
-      <div className="fixed left-1/2 top-5 z-50 -translate-x-1/2">
+      <div className="fixed left-1/2 top-5 z-50 -translate-x-1/2" style={style}>
         <div className="relative">
           <button
             onClick={() => setIsOpen(prev => !prev)}
-            className="relative flex items-center typography-small-title"
+            className={'relative flex items-center typography-small-title'}
             aria-expanded={isOpen}
           >
             {!isOpen && unread && (
