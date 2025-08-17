@@ -5,7 +5,7 @@ import { GoHeartFill } from 'react-icons/go';
 import { GoHeart } from 'react-icons/go';
 import { deleteArticleLike, deleteArticleScrap, postArticleLike, postArticleScrap } from '@/lib/apis/apis';
 import { NewsDto } from '@/types/dto';
-import PressTray from './press-tray';
+import NewsProvider from './news-provider';
 
 type NewsAbstractViewProps = Pick<
   NewsDto,
@@ -78,7 +78,7 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
         <hr className="my-4" />
         <p className="line-clamp-3 break-keep typography-body2">{news.oneLineSummary}</p>
         <div className="text-right">
-          <PressTray items={news.providers} />
+          <NewsProvider items={news.providers} />
         </div>
       </div>
     </section>
