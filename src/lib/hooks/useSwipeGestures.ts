@@ -6,9 +6,10 @@ type UseSwipeGesturesProps = {
   itemsLength: number;
   onItemChange?: (index: number) => void;
   onDetailToggle?: (index: number, isDetail: boolean) => void;
+  onEndReached?: () => void;
 };
 
-const useSwipeGestures = ({ itemsLength, onItemChange, onDetailToggle }: UseSwipeGesturesProps) => {
+const useSwipeGestures = ({ itemsLength, onItemChange, onDetailToggle, onEndReached }: UseSwipeGesturesProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDetailView, setIsDetailView] = useState(false);
   const [xTransform, setXTransform] = useState(100);
@@ -127,8 +128,19 @@ const useSwipeGestures = ({ itemsLength, onItemChange, onDetailToggle }: UseSwip
       const minSwipeDistance = 50;
 
       if (Math.abs(deltaY) > minSwipeDistance) {
-        if (deltaY < 0) goToNextItem();
-        else goToPrevItem();
+        if (deltaY < 0) {
+          // 아래로 스와이프
+          if (currentIndex >= itemsLength - 1) {
+            onEndReached?.();
+            // 스크롤 위치를 원래대로 복원
+            setYScroll(currentIndex * window.innerHeight);
+          } else {
+            goToNextItem();
+          }
+        } else {
+          // 위로 스와이프
+          goToPrevItem();
+        }
       } else {
         setYScroll(currentIndex * window.innerHeight);
       }
@@ -153,9 +165,11 @@ const useSwipeGestures = ({ itemsLength, onItemChange, onDetailToggle }: UseSwip
     dragDirection,
     currentIndex,
     isDetailView,
+    itemsLength,
     goToNextItem,
     goToPrevItem,
     toggleDetailView,
+    onEndReached,
   ]);
 
   // 마우스 이벤트 핸들러

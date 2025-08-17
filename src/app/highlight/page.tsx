@@ -1,15 +1,17 @@
 'use client';
 
+import { useCallback } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import NewsAbstractView from '@/components/features/news/news-abstract-view';
 import NewsDetailView from '@/components/features/news/news-detail-view';
 import PageSelector from '@/components/ui/page-selector';
 import { postArticleEvent } from '@/lib/apis/apis';
 import useFetchArticles from '@/lib/hooks/useFetchArticles';
 import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
-import Image from 'next/image';
-import { useCallback } from 'react';
 
 const HighlightPage = () => {
+  const router = useRouter();
   const { articles, isLoading, pagination } = useFetchArticles({ highlight: true });
   const { currentIndex, xTransform, yScroll, handlers } = useSwipeGestures({
     itemsLength: articles.length + 1,
@@ -18,6 +20,7 @@ const HighlightPage = () => {
       (index: number, isDetail: boolean) => isDetail && postArticleEvent(articles[index]?.id, 'DETAIL_VIEW'),
       [articles],
     ),
+    onEndReached: () => router.push('/'),
   });
 
   return (
