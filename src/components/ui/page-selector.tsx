@@ -27,15 +27,9 @@ const PageSelector = () => {
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(false)}
-        className={[
-          'fixed inset-0 z-40 transition-opacity duration-200 ease-out',
-          isOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
-        ].join(' ')}
-      >
-        <div className="absolute inset-0 bg-black/40" />
-      </button>
+      {isOpen && (
+        <div onClick={() => setIsOpen(false)} className="fixed inset-0 z-40 bg-black bg-opacity-50 backdrop-blur-xl" />
+      )}
 
       <div className="fixed left-1/2 top-5 z-50 -translate-x-1/2">
         <div className="relative">
