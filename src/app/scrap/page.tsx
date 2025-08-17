@@ -51,14 +51,14 @@ const ScrapListPage = () => {
 
           {/* 로딩 인디케이터 */}
           {isLoading && (
-            <div className="flex h-full w-full snap-start snap-always items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
             </div>
           )}
 
           {/* 뉴스 모두 확인 */}
           {!pagination?.hasNext && (
-            <div className="relative flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 p-8 text-center">
+            <div className="relative flex h-full w-full flex-col items-center justify-center gap-2 p-8 text-center">
               <p className="typography-sub-title">
                 저장한 뉴스를
                 <br />

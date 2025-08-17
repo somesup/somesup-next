@@ -37,14 +37,14 @@ const HomePage = () => {
 
           {/* 로딩 인디케이터 */}
           {isLoading && (
-            <div className="flex h-full w-full snap-start snap-always items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
             </div>
           )}
 
           {/* 뉴스 모두 확인 */}
           {!pagination?.hasNext && articles.length > 0 && (
-            <div className="flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 text-center">
+            <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-center">
               <p className="typography-sub-title">
                 오늘의 뉴스를
                 <br />
