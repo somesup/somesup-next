@@ -9,6 +9,7 @@ import PageSelector from '@/components/ui/page-selector';
 import { postArticleEvent } from '@/lib/apis/apis';
 import useFetchArticles from '@/lib/hooks/useFetchArticles';
 import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
+import { SITEMAP } from '@/data/sitemap';
 
 const HighlightPage = () => {
   const router = useRouter();
@@ -20,7 +21,7 @@ const HighlightPage = () => {
       (index: number, isDetail: boolean) => isDetail && postArticleEvent(articles[index]?.id, 'DETAIL_VIEW'),
       [articles],
     ),
-    onEndReached: () => router.push('/'),
+    onEndReached: () => router.push(SITEMAP.HOME),
   });
 
   return (

@@ -11,6 +11,7 @@ import useFetchArticles from '@/lib/hooks/useFetchArticles';
 import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
 import Link from 'next/link';
 import { FaChevronLeft } from 'react-icons/fa6';
+import { SITEMAP } from '@/data/sitemap';
 
 const ScrapListPage = () => {
   const searchParams = useSearchParams();
@@ -32,7 +33,11 @@ const ScrapListPage = () => {
         className="absolute top-5 flex w-full items-center justify-center px-10"
         style={{ opacity: xTransform / 100 }}
       >
-        <Link href="/my-page" aria-label="뒤로가기" className="absolute left-4 top-1/2 -translate-y-1/2 rounded p-1">
+        <Link
+          href={SITEMAP.MY_PAGE}
+          aria-label="뒤로가기"
+          className="absolute left-4 top-1/2 -translate-y-1/2 rounded p-1"
+        >
           <FaChevronLeft className="h-5 w-5" />
         </Link>
         <h1 className="text-center typography-small-title">스크랩 목록</h1>
@@ -72,7 +77,7 @@ const ScrapListPage = () => {
                 height={280}
               />
               <Link
-                href="/my-page/scrap"
+                href={SITEMAP.MY_PAGE_SCRAP}
                 className="absolute bottom-8 flex h-[3.75rem] w-[calc(100%-4rem)] items-center justify-center rounded-lg bg-gray-60 text-gray-10 typography-body1"
               >
                 스크랩 목록으로 돌아가기

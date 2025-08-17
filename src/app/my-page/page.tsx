@@ -12,6 +12,7 @@ import { toast } from '@/components/ui/toast';
 import Hexagon from '@/components/ui/hexagon';
 import WordCloud from '@/components/features/my-page/word-cloud';
 import PageSelector from '@/components/ui/page-selector';
+import { SITEMAP } from '@/data/sitemap';
 
 const MyPage = () => {
   const [data, setData] = useState<MyPageDto | null>(null);
@@ -54,14 +55,14 @@ const MyPage = () => {
             {nickname}
             <span className="ml-[0.125rem] typography-body1">님</span>
           </p>
-          <Link href="/set-nickname">
+          <Link href={SITEMAP.SET_NICKNAME}>
             <RiPencilFill className="h-5 w-5" />
           </Link>
         </div>
 
         <div className="mb-5">
           <Link
-            href="/my-page/scrap"
+            href={SITEMAP.MY_PAGE_SCRAP}
             className="flex w-full items-center justify-between gap-3 rounded-xl bg-[#2E2E2E] p-3 text-left"
           >
             <div className="flex items-center gap-3">
@@ -96,7 +97,7 @@ const MyPage = () => {
               </span>
             </div>
             <Link
-              href="/set-preferences"
+              href={SITEMAP.SET_PREFERENCES}
               className="flex w-full items-center justify-between border-t border-[#5D5D5D] px-3 py-3 text-left"
             >
               <span className="typography-body2">관심 카테고리 수정</span>

@@ -12,6 +12,7 @@ import { UpdatePreferencesRequestDto } from '@/types/dto';
 import { authUpdatePreferences } from '@/lib/apis/apis';
 import { toast } from '@/components/ui/toast';
 import SetPreferenceWaitPage from '@/components/features/set-preference/set-preference-wait-page';
+import { SITEMAP } from '@/data/sitemap';
 
 const SetPreferencesPage = () => {
   const [step, setStep] = useState<'first' | 'detail' | 'finish' | 'wait'>('first');
@@ -27,7 +28,7 @@ const SetPreferencesPage = () => {
     }, [] as UpdatePreferencesRequestDto);
 
     const { error } = await authUpdatePreferences(request);
-    if (!error) return router.push('/');
+    if (!error) return router.push(SITEMAP.HOME);
     toast.serverError();
   };
 

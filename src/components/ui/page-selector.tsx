@@ -5,13 +5,14 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect, ComponentProps, CSSProperties } from 'react';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdFiberManualRecord } from 'react-icons/md';
 import { isDailyUnread } from '@/lib/utils/news-daily';
+import { SITEMAP } from '@/data/sitemap';
 
 type Page = { href: string; label: string };
 
 const pages: Page[] = [
-  { href: '/', label: "Some's up" },
-  { href: '/highlight', label: '5분 뉴스' },
-  { href: '/my-page', label: '마이페이지' },
+  { href: SITEMAP.HOME, label: "Some's up" },
+  { href: SITEMAP.HIGHLIGHT, label: '5분 뉴스' },
+  { href: SITEMAP.MY_PAGE, label: '마이페이지' },
 ];
 
 const PageSelector = ({ style }: { style?: CSSProperties }) => {

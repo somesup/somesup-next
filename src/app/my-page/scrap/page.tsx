@@ -7,6 +7,7 @@ import { useInfiniteScroll } from '@/lib/hooks/useInfiniteScroll';
 import { getArticles } from '@/lib/apis/apis';
 import type { NewsDto } from '@/types/dto';
 import { GoBookmarkFill } from 'react-icons/go';
+import { SITEMAP } from '@/data/sitemap';
 
 const ScrapsPage = () => {
   const { items, loading, sentinelRef, isEmpty, isLastPage } = useInfiniteScroll<NewsDto>({
@@ -17,7 +18,11 @@ const ScrapsPage = () => {
     <main className="flex min-h-screen w-full max-w-mobile flex-col items-center bg-gray-10 text-[#FAFAFA]">
       <header className="mb-3 w-full pt-7">
         <div className="relative flex items-center justify-center px-10">
-          <Link href="/my-page" aria-label="뒤로가기" className="absolute left-4 top-1/2 -translate-y-1/2 rounded p-1">
+          <Link
+            href={SITEMAP.MY_PAGE}
+            aria-label="뒤로가기"
+            className="absolute left-4 top-1/2 -translate-y-1/2 rounded p-1"
+          >
             <FaChevronLeft className="h-5 w-5" />
           </Link>
           <h1 className="text-center typography-small-title">스크랩 목록</h1>
