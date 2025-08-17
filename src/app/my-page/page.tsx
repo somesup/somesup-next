@@ -45,8 +45,6 @@ const MyPage = () => {
     return stats.map(s => (s.behaviorScore / 3) * 90);
   }, [data?.sectionStats]);
 
-  console.log(data?.keywordStats);
-
   return (
     <main className="flex h-full w-full max-w-mobile flex-col items-center justify-center bg-gray-10">
       <PageSelector />
