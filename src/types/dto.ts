@@ -9,7 +9,7 @@ export type PaginationDto = {
   prevCursor: string | null;
 };
 export type APIResult<T> =
-  | { error: Error; data: null; pagination: null }
+  | { error: Error; data: null; pagination?: null }
   | { error: null; data: T; pagination?: PaginationDto };
 
 export type PhoneRequestDto = { phoneNumber: string };
