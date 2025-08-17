@@ -6,6 +6,7 @@ import { GoHeart } from 'react-icons/go';
 import { deleteArticleLike, deleteArticleScrap, postArticleLike, postArticleScrap } from '@/lib/apis/apis';
 import { NewsDto } from '@/types/dto';
 import NewsProvider from './news-provider';
+import { toast } from '@/components/ui/toast';
 
 type NewsAbstractViewProps = Pick<
   NewsDto,
@@ -50,6 +51,7 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
       if (error) setIsScrapped(true);
     } else {
       setIsScrapped(true);
+      toast.scrap();
       const { error } = await postArticleScrap(news.id);
       if (error) setIsScrapped(false);
     }
