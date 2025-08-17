@@ -10,6 +10,7 @@ import { postArticleEvent } from '@/lib/apis/apis';
 import useFetchArticles from '@/lib/hooks/useFetchArticles';
 import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
 import Link from 'next/link';
+import { FaChevronLeft } from 'react-icons/fa6';
 
 const ScrapListPage = () => {
   const searchParams = useSearchParams();
@@ -27,7 +28,15 @@ const ScrapListPage = () => {
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">
-      <PageSelector style={{ opacity: xTransform / 100 }} />
+      <div
+        className="absolute top-5 flex w-full items-center justify-center px-10"
+        style={{ opacity: xTransform / 100 }}
+      >
+        <Link href="/my-page" aria-label="뒤로가기" className="absolute left-4 top-1/2 -translate-y-1/2 rounded p-1">
+          <FaChevronLeft className="h-5 w-5" />
+        </Link>
+        <h1 className="text-center typography-small-title">스크랩 목록</h1>
+      </div>
 
       {/* 메인 컨테이너 */}
       <div className="relative h-full w-full select-none" {...handlers}>
@@ -49,7 +58,7 @@ const ScrapListPage = () => {
 
           {/* 뉴스 모두 확인 */}
           {!pagination?.hasNext && (
-            <div className="relative flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 text-center">
+            <div className="relative flex h-full w-full snap-start snap-always flex-col items-center justify-center gap-2 p-8 text-center">
               <p className="typography-sub-title">
                 저장한 뉴스를
                 <br />
