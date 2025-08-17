@@ -26,9 +26,11 @@ const SetPreferenceDetailPage = ({ onConfirm }: SetPreferenceDetailPageProps) =>
     setPreference(sectionLabels[currentIndex], radii[currentIndex] / 30);
     setSlideValue((radii[index] / 30 - 1) * 50);
     setVisited(v => {
-      v[index] = true;
-      return v;
+      const newVisited = [...v];
+      newVisited[index] = true;
+      return newVisited;
     });
+
     setCurrentIndex(index);
 
     setTimeout(() => {
@@ -47,8 +49,9 @@ const SetPreferenceDetailPage = ({ onConfirm }: SetPreferenceDetailPageProps) =>
 
   const handleSlideValueChange = (value: number) => {
     setRadii(radii => {
-      radii[currentIndex] = (value / 50) * 30 + 30;
-      return radii;
+      const newRadii = [...radii];
+      newRadii[currentIndex] = (value / 50) * 30 + 30;
+      return newRadii;
     });
     setSlideValue(value);
   };
