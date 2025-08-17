@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { NewsDto } from '@/types/dto';
 
 const ArticleCard = ({ article, index }: { article: NewsDto; index: number }) => {
