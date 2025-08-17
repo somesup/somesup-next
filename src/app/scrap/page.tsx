@@ -30,11 +30,11 @@ const ScrapListPage = () => {
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">
       <div
-        className="absolute top-5 flex w-full items-center justify-center px-10"
+        className="absolute top-7 z-40 flex w-full items-center justify-center px-10"
         style={{ opacity: xTransform / 100 }}
       >
         <Link
-          href={SITEMAP.MY_PAGE}
+          href={SITEMAP.MY_PAGE_SCRAP}
           aria-label="뒤로가기"
           className="absolute left-4 top-1/2 -translate-y-1/2 rounded p-1"
         >
