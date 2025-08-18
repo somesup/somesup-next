@@ -35,7 +35,6 @@ const HomePage = () => {
   });
 
   useEffect(() => {
-    console.log('isVisited ==> ', isVisited());
     if (!isVisited()) toast.fiveNews();
   }, []);
 

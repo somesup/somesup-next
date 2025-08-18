@@ -59,7 +59,6 @@ const useSwipeGestures = ({
 
   // 이전 아이템으로 이동
   const goToPrevItem = useCallback(() => {
-    console.log('currentIndex ==> ', currentIndex);
     if (currentIndex <= 0) onStartReached?.();
     const prevIndex = Math.max(currentIndex - 1, 0);
     setCurrentIndex(prevIndex);

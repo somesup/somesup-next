@@ -108,7 +108,8 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
       const newAccessToken = await refreshAccessToken();
 
       if (!newAccessToken) {
-        if (typeof window !== 'undefined') window.location.href = SITEMAP.ONBOARDING;
+        if (typeof window !== 'undefined' && endpoint.split('/').at(-1) !== 'sign-in')
+          window.location.href = SITEMAP.ONBOARDING;
         return {
           error: { status: 401, message: 'Authentication failed' },
           data: null,

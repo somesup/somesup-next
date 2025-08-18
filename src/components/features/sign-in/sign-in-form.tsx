@@ -71,7 +71,7 @@ const SignInForm = () => {
   };
 
   return (
-    <form className="relative flex w-full flex-1 flex-col items-end" onSubmit={handleConfirm}>
+    <form className="relative flex h-screen w-full flex-col items-end" onSubmit={handleConfirm}>
       <label className="sr-only" htmlFor="phoneNumber">
         전화번호 입력
       </label>
