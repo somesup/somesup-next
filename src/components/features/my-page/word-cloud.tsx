@@ -11,7 +11,10 @@ type CloudProps = {
 };
 
 const WordCloud = ({ items, height = 240 }: CloudProps) => {
-  const words: Word[] = (items ?? []).map(k => ({ text: k.keyword, value: k.count }));
+  const words: Word[] = (items ?? [])
+    .sort((keywordA, keywordB) => keywordB.count - keywordA.count)
+    .slice(0, 20)
+    .map(k => ({ text: k.keyword, value: k.count }));
 
   const options: Options = {
     colors: ['#ff904b', '#ffb764', '#ffd13c', '#ffeec3', '#1ab6b2'],
