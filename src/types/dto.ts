@@ -17,12 +17,8 @@ export type UpdatePreferencesRequestDto = Pick<SectionPreferenceDto, 'sectionId'
 export type UserDto = { id: number; phone: string; nickname: string };
 export type TokenDto = { accessToken: string; refreshToken: string };
 
-export type SectionPreferenceDto = {
-  userId: number;
-  sectionId: number;
-  sectionName: SectionType;
-  preference: number;
-};
+export type SectionPreferenceDto = { sectionId: number; sectionName: SectionType; preference: number };
+export type SectionWithBehaviorDto = SectionPreferenceDto & { behaviorScore: number };
 export type SectionPreferenceRequestDto = Pick<SectionPreferenceDto, 'sectionId' | 'preference'>[];
 
 export type SignInResponseDto = Expand<{
@@ -50,20 +46,8 @@ export type NewsDto = {
 };
 
 export type MyPageDto = {
-  user: {
-    id: number;
-    nickname: string;
-    phone: string;
-    isAuthenticated: boolean;
-    createdAt: string;
-    updatedAt: string;
-  };
-  sectionStats: {
-    sectionId: number;
-    sectionName: SectionType;
-    preference: number;
-    behaviorScore: number;
-  }[];
+  user: UserDto;
+  sectionStats: SectionWithBehaviorDto[];
   keywordStats: { keyword: string; count: number }[];
 };
 
