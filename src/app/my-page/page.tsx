@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { FaBookmark, FaChevronRight, FaSquare } from 'react-icons/fa6';
 import { RiPencilFill } from 'react-icons/ri';
 
-import type { MyPageDto } from '@/types/dto';
+import type { MyPageDto, SectionWithBehaviorDto } from '@/types/dto';
 import { getMyPageStats } from '@/lib/apis/apis';
 import { toast } from '@/components/ui/toast';
 
@@ -13,48 +13,49 @@ import Hexagon from '@/components/ui/hexagon';
 import WordCloud from '@/components/features/my-page/word-cloud';
 import PageSelector from '@/components/ui/page-selector';
 import { SITEMAP } from '@/data/sitemap';
+import { sectionLabels, SectionType } from '@/types/types';
 
 const MyPage = () => {
   const [data, setData] = useState<MyPageDto | null>(null);
-  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     (async () => {
       try {
         const res = await getMyPageStats();
-        if (res.error) {
-          toast.serverError();
-          return;
-        }
-        setData(res.data ?? null);
+        if (res.error) return toast.serverError();
+        setData(res.data);
       } catch (e) {
         toast.serverError();
-      } finally {
-        setLoading(false);
       }
     })();
   }, []);
 
-  const nickname = data?.user.nickname ?? '사용자';
+  const sections = data
+    ? data.sectionStats.reduce(
+        (acc, stat) => {
+          acc[stat.sectionName] = stat;
+          return acc;
+        },
+        {} as Record<SectionType, SectionWithBehaviorDto>,
+      )
+    : ({} as Record<SectionType, SectionWithBehaviorDto>);
 
-  const prefRadii = React.useMemo(() => {
-    const stats = (data?.sectionStats ?? []).slice().sort((a, b) => a.sectionId - b.sectionId);
-    return stats.map(s => (s.preference / 3) * 90);
-  }, [data?.sectionStats]);
-
-  const behaviorRadii = React.useMemo(() => {
-    const stats = (data?.sectionStats ?? []).slice().sort((a, b) => a.sectionId - b.sectionId);
-    return stats.map(s => (s.behaviorScore / 3) * 90);
-  }, [data?.sectionStats]);
+  const preferenceRadii = sectionLabels.map(label => (sections[label]?.preference ?? 1) * 30);
+  const behaviorRadii = sectionLabels.map(label => (sections[label]?.behaviorScore ?? 1) * 30);
 
   return (
     <main className="flex h-full w-full max-w-mobile flex-col items-center justify-center bg-gray-10">
       <PageSelector />
       <div className="w-full px-10 pt-16">
         <div className="mb-5 flex items-center gap-2">
-          <p className="typography-sub-title-bold">
-            {nickname}
-            <span className="ml-[0.125rem] typography-body1">님</span>
-          </p>
+          {data ? (
+            <p className="h-8 typography-sub-title-bold">
+              {data.user.nickname}
+              <span className="ml-[0.125rem] typography-body1">님</span>
+            </p>
+          ) : (
+            <div className="h-8 w-24 animate-pulse rounded bg-gray-20" />
+          )}
           <Link href={SITEMAP.SET_NICKNAME}>
             <RiPencilFill className="h-5 w-5" />
           </Link>
@@ -79,7 +80,7 @@ const MyPage = () => {
             <div className="p-4">
               <Hexagon
                 hexagons={[
-                  { radii: prefRadii, fill: '#FF880060', stroke: '#FF8800' },
+                  { radii: preferenceRadii, fill: '#FF880060', stroke: '#FF8800' },
                   { radii: behaviorRadii, fill: '#AEFF8860', stroke: '#AEFF88' },
                 ]}
                 width={250}
@@ -109,23 +110,14 @@ const MyPage = () => {
         <section className="mb-8">
           <h2 className="mb-2 typography-body2">자주 접한 키워드</h2>
           <div className="h-52 overflow-hidden rounded-xl bg-[#2E2E2E]">
-            {data ? (
-              data.keywordStats.length > 10 ? (
-                <div className="h-full w-full">
-                  <WordCloud
-                    height={208}
-                    items={data.keywordStats.map(k => ({ keyword: k.keyword, count: k.count }))}
-                  />
-                </div>
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-[url('/images/keyword-bg.png')] bg-cover bg-center bg-no-repeat text-center">
-                  키워드 분석 준비 중입니다.
-                  <br />더 많은 뉴스 시청 기록이 필요해요 !
-                </div>
-              )
+            {data && data.keywordStats.length > 10 ? (
+              <div className="h-full w-full">
+                <WordCloud height={208} items={data.keywordStats.map(k => ({ keyword: k.keyword, count: k.count }))} />
+              </div>
             ) : (
-              <div className="grid aspect-[16/9] w-full place-items-center tracking-wide typography-body1">
-                불러오는 중...
+              <div className="flex h-full w-full items-center justify-center bg-[url('/images/keyword-bg.png')] bg-cover bg-center bg-no-repeat text-center">
+                키워드 분석 준비 중입니다.
+                <br />더 많은 뉴스 시청 기록이 필요해요 !
               </div>
             )}
           </div>
