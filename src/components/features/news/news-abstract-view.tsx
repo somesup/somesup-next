@@ -81,7 +81,7 @@ const NewsAbstractView = (news: NewsAbstractViewProps) => {
             <h2 className="line-clamp-2 break-keep typography-sub-title-bold">{news.title}</h2>
           </div>
           <div className="flex flex-col items-center justify-end gap-3">
-            <button className="flex touch-manipulation flex-col" onClick={handleToggleLike}>
+            <button className="flex touch-manipulation flex-col items-center" onClick={handleToggleLike}>
               {isLiked ? <GoHeartFill color="#FF3F62" size="26" /> : <GoHeart size="26" />}
               <span className="!leading-3 typography-caption">{likeCount}</span>
             </button>
