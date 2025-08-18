@@ -79,6 +79,7 @@ export async function deleteArticleScrap(id: number): Promise<APIResult<null>> {
 }
 
 export async function postArticleEvent(id: number, eventType: 'VIEW' | 'DETAIL_VIEW'): Promise<APIResult<null>> {
+  if (id === null || id === undefined) return { error: null, data: null };
   return api.post(`/articles/${id}/view-events`, { eventType });
 }
 
