@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-type Toast = {
+export type Toast = {
   id: string;
   type: 'error' | 'info' | 'success' | 'promo' | 'scrap';
   title: string;
