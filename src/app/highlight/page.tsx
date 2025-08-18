@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import NewsAbstractView from '@/components/features/news/news-abstract-view';
@@ -10,11 +10,14 @@ import { postArticleEvent } from '@/lib/apis/apis';
 import useFetchArticles from '@/lib/hooks/useFetchArticles';
 import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
 import { SITEMAP } from '@/data/sitemap';
+import { useHighlightStore } from '@/lib/stores/highlight';
 
 const FETCH_THRESHOLD = 5;
 
 const HighlightPage = () => {
   const router = useRouter();
+  const setLastVisitNow = useHighlightStore(state => state.setLastVisitNow);
+
   const { articles, isNextLoading, pagination, fetchNextArticles } = useFetchArticles(0, { highlight: true });
 
   const { currentIndex, xTransform, yScroll, handlers } = useSwipeGestures({
@@ -33,6 +36,8 @@ const HighlightPage = () => {
     ),
     onEndReached: () => router.push(SITEMAP.HOME),
   });
+
+  useEffect(() => setLastVisitNow(), []);
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">

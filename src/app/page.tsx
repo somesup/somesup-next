@@ -3,15 +3,19 @@
 import NewsAbstractView from '@/components/features/news/news-abstract-view';
 import NewsDetailView from '@/components/features/news/news-detail-view';
 import PageSelector from '@/components/ui/page-selector';
+import { toast } from '@/components/ui/toast';
 import { postArticleEvent } from '@/lib/apis/apis';
 import useFetchArticles from '@/lib/hooks/useFetchArticles';
 import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
+import { useHighlightStore } from '@/lib/stores/highlight';
 import Image from 'next/image';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 const FETCH_THRESHOLD = 5;
 
 const HomePage = () => {
+  const isVisited = useHighlightStore(state => state.isVisited);
+
   const { articles, isNextLoading, pagination, fetchNextArticles } = useFetchArticles(0);
 
   const { currentIndex, xTransform, yScroll, handlers } = useSwipeGestures({
@@ -29,6 +33,11 @@ const HomePage = () => {
       [articles],
     ),
   });
+
+  useEffect(() => {
+    console.log('isVisited ==> ', isVisited());
+    if (!isVisited()) toast.fiveNews();
+  }, []);
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">

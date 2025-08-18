@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, ComponentProps, CSSProperties } from 'react';
+import { useState, useEffect, CSSProperties } from 'react';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp, MdFiberManualRecord } from 'react-icons/md';
-import { isDailyUnread } from '@/lib/utils/news-daily';
 import { SITEMAP } from '@/data/sitemap';
+import { useHighlightStore } from '@/lib/stores/highlight';
 
 type Page = { href: string; label: string };
 
@@ -19,14 +19,10 @@ const PageSelector = ({ style }: { style?: CSSProperties }) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [unread, setUnread] = useState(false);
+  const isVisited = useHighlightStore(state => state.isVisited);
 
   const currentPage = pages.find(p => p.href === pathname) ?? pages[0];
   const otherPages = pages.filter(p => p.href !== currentPage.href);
-
-  useEffect(() => {
-    setUnread(isDailyUnread());
-  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -55,7 +51,7 @@ const PageSelector = ({ style }: { style?: CSSProperties }) => {
             className={'relative flex items-center typography-small-title'}
             aria-expanded={isOpen}
           >
-            {!isOpen && unread && (
+            {!isOpen && !isVisited() && (
               <MdFiberManualRecord size={12} color="#FF3F62" className="absolute -left-5 top-1/2 -translate-y-1/2" />
             )}
             <span>{currentPage.label}</span>
@@ -81,7 +77,7 @@ const PageSelector = ({ style }: { style?: CSSProperties }) => {
                     className="relative whitespace-nowrap transition-colors duration-150 ease-out typography-small-title hover:opacity-70"
                     onClick={handleClose}
                   >
-                    {label === '5분 뉴스' && unread && (
+                    {label === '5분 뉴스' && !isVisited() && (
                       <MdFiberManualRecord
                         size={12}
                         color="#FF3F62"
