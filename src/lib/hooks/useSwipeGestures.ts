@@ -6,10 +6,17 @@ type UseSwipeGesturesProps = {
   itemsLength: number;
   onItemChange?: (index: number) => void;
   onDetailToggle?: (index: number, isDetail: boolean) => void;
+  onStartReached?: () => void;
   onEndReached?: () => void;
 };
 
-const useSwipeGestures = ({ itemsLength, onItemChange, onDetailToggle, onEndReached }: UseSwipeGesturesProps) => {
+const useSwipeGestures = ({
+  itemsLength,
+  onItemChange,
+  onDetailToggle,
+  onStartReached,
+  onEndReached,
+}: UseSwipeGesturesProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDetailView, setIsDetailView] = useState(false);
   const [xTransform, setXTransform] = useState(100);
@@ -18,46 +25,52 @@ const useSwipeGestures = ({ itemsLength, onItemChange, onDetailToggle, onEndReac
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragCurrent, setDragCurrent] = useState({ x: 0, y: 0 });
   const [dragDirection, setDragDirection] = useState<DragDirection>('none');
+  const [isAnimating, setIsAnimating] = useState(true);
 
   // 아이템 변경 시 콜백 호출
   useEffect(() => {
     onItemChange?.(currentIndex);
-  }, [currentIndex, onItemChange]);
+  }, [currentIndex]);
 
   // 디테일 뷰 변경 시 콜백 호출
   useEffect(() => {
     onDetailToggle?.(currentIndex, isDetailView);
-  }, [isDetailView, onDetailToggle]);
+  }, [isDetailView, onDetailToggle, currentIndex]);
+
+  // 특정 아이템으로 이동
+  const goToItem = useCallback(
+    (index: number) => {
+      setIsAnimating(false);
+      setCurrentIndex(index);
+      setYScroll(index * window.innerHeight);
+
+      requestAnimationFrame(() => setIsAnimating(true));
+    },
+    [itemsLength],
+  );
 
   // 다음 아이템으로 이동
   const goToNextItem = useCallback(() => {
+    if (currentIndex >= itemsLength - 1) onEndReached?.();
     const nextIndex = Math.min(currentIndex + 1, itemsLength - 1);
     setCurrentIndex(nextIndex);
     setYScroll(nextIndex * window.innerHeight);
-  }, [currentIndex, itemsLength]);
+  }, [currentIndex, itemsLength, onEndReached]);
 
   // 이전 아이템으로 이동
   const goToPrevItem = useCallback(() => {
+    console.log('currentIndex ==> ', currentIndex);
+    if (currentIndex <= 0) onStartReached?.();
     const prevIndex = Math.max(currentIndex - 1, 0);
     setCurrentIndex(prevIndex);
     setYScroll(prevIndex * window.innerHeight);
-  }, [currentIndex]);
+  }, [currentIndex, onStartReached]);
 
   // 디테일 뷰 토글
   const toggleDetailView = useCallback((show: boolean) => {
     setIsDetailView(show);
     setXTransform(show ? 0 : 100);
   }, []);
-
-  // 특정 아이템으로 이동
-  const goToItem = useCallback(
-    (index: number) => {
-      const clampedIndex = Math.max(0, Math.min(index, itemsLength - 1));
-      setCurrentIndex(clampedIndex);
-      setYScroll(clampedIndex * window.innerHeight);
-    },
-    [itemsLength],
-  );
 
   // 드래그 시작
   const handleStart = useCallback((clientX: number, clientY: number) => {
@@ -128,19 +141,8 @@ const useSwipeGestures = ({ itemsLength, onItemChange, onDetailToggle, onEndReac
       const minSwipeDistance = 50;
 
       if (Math.abs(deltaY) > minSwipeDistance) {
-        if (deltaY < 0) {
-          // 아래로 스와이프
-          if (currentIndex >= itemsLength - 1) {
-            onEndReached?.();
-            // 스크롤 위치를 원래대로 복원
-            setYScroll(currentIndex * window.innerHeight);
-          } else {
-            goToNextItem();
-          }
-        } else {
-          // 위로 스와이프
-          goToPrevItem();
-        }
+        if (deltaY < 0) goToNextItem();
+        else goToPrevItem();
       } else {
         setYScroll(currentIndex * window.innerHeight);
       }
@@ -165,11 +167,9 @@ const useSwipeGestures = ({ itemsLength, onItemChange, onDetailToggle, onEndReac
     dragDirection,
     currentIndex,
     isDetailView,
-    itemsLength,
     goToNextItem,
     goToPrevItem,
     toggleDetailView,
-    onEndReached,
   ]);
 
   // 마우스 이벤트 핸들러
@@ -221,6 +221,7 @@ const useSwipeGestures = ({ itemsLength, onItemChange, onDetailToggle, onEndReac
     yScroll,
     dragDirection,
     isDragging,
+    isAnimating,
 
     // Actions
     goToNextItem,

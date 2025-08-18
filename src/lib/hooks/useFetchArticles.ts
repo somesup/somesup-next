@@ -1,59 +1,99 @@
-import { ArticlesRequestDto, NewsDto, PaginationDto } from '@/types/dto';
+import { ArticlesRequestDto, NewsDto } from '@/types/dto';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { getArticles } from '../apis/apis';
 import { toast } from '@/components/ui/toast';
 
-const initialPagination: PaginationDto = { hasNext: true, nextCursor: '' };
+const getCursor = (index: number, prev: boolean, limit: number) => {
+  if (prev) {
+    const readingIndex = Math.max(index - limit, 0);
+    const cursor = btoa(`{"idx":${readingIndex + 1}}`);
+    return { nextIndex: readingIndex, cursor, limit: Math.min(index - readingIndex, limit), hasPrev: readingIndex > 0 };
+  }
+  const cursor = btoa(`{"idx":${index + 1}}`);
+  return { nextIndex: index + limit, cursor, limit, hasPrev: index > 0 };
+};
 
-const useFetchArticles = ({ cursor = '', ...props }: ArticlesRequestDto) => {
+const useFetchArticles = (index: number, options?: Omit<ArticlesRequestDto, 'cursor'>) => {
   const [articles, setArticles] = useState<NewsDto[]>([]);
-  const [pagination, setPagination] = useState<PaginationDto>({ ...initialPagination, nextCursor: cursor });
-  const [isLoading, setIsLoading] = useState(false);
+  const [pagination, setPagination] = useState({ hasPrev: index > 0, hasNext: true });
+  const [fetchState, setFetchState] = useState({ start: index, end: index });
 
-  const propsRef = useRef(props);
+  const limit = options?.limit || 15;
+  const optionsRef = useRef(options);
+  const isPrevLoading = useRef(false);
+  const isNextLoading = useRef(false);
 
-  const fetchArticles = useCallback(async () => {
-    if (!!isLoading || !pagination.hasNext) return;
+  const fetchNextArticles = useCallback(async () => {
+    if (isNextLoading.current || !pagination.hasNext) return 0;
 
-    setIsLoading(true);
+    isNextLoading.current = true;
 
     try {
-      const cursor = pagination.nextCursor;
-      const { error: apiError, data, pagination: newPagination } = await getArticles({ cursor, ...props });
+      const { cursor } = getCursor(fetchState.end, false, limit);
+      const { error: apiError, data, pagination: newPagination } = await getArticles({ cursor, ...options, limit });
 
-      if (apiError?.status === 404) return setPagination({ nextCursor: '', hasNext: false });
-      if (apiError) return toast.serverError();
+      if (apiError?.status === 404) return setPagination(prev => ({ ...prev, hasNext: false })) ?? 0;
+      if (apiError) return toast.serverError() ?? 0;
 
-      if (newPagination) setPagination(newPagination);
+      if (newPagination) setPagination(prev => ({ ...prev, ...newPagination }));
       setArticles(prev => [...prev, ...data]);
+      setFetchState(prev => ({ ...prev, end: prev.end + data.length }));
+      return data.length;
     } catch (e) {
-      console.error('Failed to fetch articles:', e);
+      console.error('Failed to fetch next articles:', e);
+      return 0;
     } finally {
-      setIsLoading(false);
+      isNextLoading.current = false;
     }
-  }, [props, pagination.nextCursor, pagination.hasNext, articles.length]);
+  }, [options, fetchState.end, pagination.hasNext, limit, isNextLoading]);
+
+  const fetchPrevArticles = useCallback(async () => {
+    if (isPrevLoading.current || !pagination.hasPrev) return 0;
+
+    isPrevLoading.current = true;
+
+    try {
+      const { cursor, limit: actualLimit, hasPrev: newHasPrev } = getCursor(fetchState.start, true, limit);
+      const { error: apiError, data } = await getArticles({ cursor, ...options, limit: actualLimit });
+
+      if (apiError?.status === 404) return setPagination(prev => ({ ...prev, hasPrev: false })) ?? 0;
+      if (apiError) return toast.serverError() ?? 0;
+
+      setArticles(prev => [...data, ...prev]);
+      setFetchState(prev => ({ ...prev, start: prev.start - data.length }));
+      setPagination(prev => ({ ...prev, hasPrev: newHasPrev }));
+      return data.length;
+    } catch (e) {
+      console.error('Failed to fetch prev articles:', e);
+      return 0;
+    } finally {
+      isPrevLoading.current = false;
+    }
+  }, [options, fetchState.start, pagination.hasPrev, limit, isPrevLoading]);
 
   useEffect(() => {
-    const propsChanged = JSON.stringify(propsRef.current) !== JSON.stringify(props);
-    if (!propsChanged) return;
+    const optionsChanged = JSON.stringify(optionsRef.current) !== JSON.stringify(options);
 
-    propsRef.current = props;
-    setArticles([]);
-    setPagination(initialPagination);
-    setIsLoading(true);
-    fetchArticles();
-  }, [props, fetchArticles]);
+    if (optionsChanged) {
+      optionsRef.current = options;
+      setArticles([]);
+      setFetchState({ start: index, end: index });
+      setPagination({ hasPrev: index > 0, hasNext: true });
 
-  useEffect(() => {
-    setIsLoading(true);
-    fetchArticles();
-  }, []);
+      fetchNextArticles();
+    }
+  }, [options]);
+
+  useEffect(() => void fetchNextArticles(), []);
 
   return {
     articles,
-    isLoading,
+    isNextLoading: isNextLoading.current,
+    isPrevLoading: isPrevLoading.current,
     pagination,
-    getMore: fetchArticles,
+    fetchState,
+    fetchNextArticles,
+    fetchPrevArticles,
   };
 };
 
