@@ -1,21 +1,21 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-type Toast = {
+export type Toast = {
   id: string;
   type: 'error' | 'info' | 'success' | 'promo' | 'scrap';
   title: string;
   description?: string;
 };
 
-interface ToastStore {
+export type ToastStore = {
   toasts: Toast[];
   add: (toast: Toast) => void;
   remove: (id: string) => void;
   clear: () => void;
-}
+};
 
-const useToastStore = create<ToastStore>()(
+export const useToastStore = create<ToastStore>()(
   immer(set => ({
     toasts: [],
     add: toast =>
@@ -32,5 +32,3 @@ const useToastStore = create<ToastStore>()(
       }),
   })),
 );
-
-export { useToastStore, type Toast };

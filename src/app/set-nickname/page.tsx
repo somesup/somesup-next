@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 import { useUserSESStore, useUserStore } from '@/lib/stores/user';
 import { authUpdateUser } from '@/lib/apis/apis';
+import { SITEMAP } from '@/data/sitemap';
 
 const SetNicknamePage = () => {
   const searchParams = useSearchParams();
@@ -23,7 +24,7 @@ const SetNicknamePage = () => {
     if (!error) {
       updateNickname(nickname);
       const isCreated = searchParams.get('isCreated');
-      return isCreated ? router.push('/set-preferences') : router.push('/my-page');
+      return isCreated ? router.push(SITEMAP.SET_PREFERENCES) : router.push(SITEMAP.MY_PAGE);
     }
     toast.serverError();
   };

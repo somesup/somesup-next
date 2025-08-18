@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import NewsAbstractView from '@/components/features/news/news-abstract-view';
@@ -9,19 +9,35 @@ import PageSelector from '@/components/ui/page-selector';
 import { postArticleEvent } from '@/lib/apis/apis';
 import useFetchArticles from '@/lib/hooks/useFetchArticles';
 import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
+import { SITEMAP } from '@/data/sitemap';
+import { useHighlightStore } from '@/lib/stores/highlight';
+
+const FETCH_THRESHOLD = 5;
 
 const HighlightPage = () => {
   const router = useRouter();
-  const { articles, isLoading, pagination } = useFetchArticles({ highlight: true });
+  const setLastVisitNow = useHighlightStore(state => state.setLastVisitNow);
+
+  const { articles, isNextLoading, pagination, fetchNextArticles } = useFetchArticles(0, { highlight: true });
+
   const { currentIndex, xTransform, yScroll, handlers } = useSwipeGestures({
     itemsLength: articles.length + 1,
-    onItemChange: useCallback((index: number) => postArticleEvent(articles[index]?.id, 'VIEW'), [articles]),
+    onItemChange: useCallback(
+      async (index: number) => {
+        if (articles[index]?.id) postArticleEvent(articles[index].id, 'VIEW');
+        if (articles.length - index <= FETCH_THRESHOLD && !isNextLoading && pagination.hasNext) fetchNextArticles();
+      },
+      [articles, isNextLoading, pagination.hasNext, fetchNextArticles],
+    ),
     onDetailToggle: useCallback(
-      (index: number, isDetail: boolean) => isDetail && postArticleEvent(articles[index]?.id, 'DETAIL_VIEW'),
+      (index: number, isDetail: boolean) =>
+        isDetail && articles[index]?.id && postArticleEvent(articles[index].id, 'DETAIL_VIEW'),
       [articles],
     ),
-    onEndReached: () => router.push('/'),
+    onEndReached: () => router.push(SITEMAP.HOME),
   });
+
+  useEffect(() => setLastVisitNow(), []);
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">
@@ -39,14 +55,14 @@ const HighlightPage = () => {
           ))}
 
           {/* 로딩 인디케이터 */}
-          {isLoading && (
+          {pagination.hasNext && (
             <div className="flex h-full w-full items-center justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
             </div>
           )}
 
           {/* 뉴스 모두 확인 */}
-          {!pagination?.hasNext && articles.length > 0 && (
+          {!pagination?.hasNext && (
             <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-center">
               <p className="typography-sub-title">
                 오늘의 5분 뉴스를

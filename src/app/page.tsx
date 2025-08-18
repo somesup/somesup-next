@@ -3,22 +3,41 @@
 import NewsAbstractView from '@/components/features/news/news-abstract-view';
 import NewsDetailView from '@/components/features/news/news-detail-view';
 import PageSelector from '@/components/ui/page-selector';
+import { toast } from '@/components/ui/toast';
 import { postArticleEvent } from '@/lib/apis/apis';
 import useFetchArticles from '@/lib/hooks/useFetchArticles';
 import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
+import { useHighlightStore } from '@/lib/stores/highlight';
 import Image from 'next/image';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
+
+const FETCH_THRESHOLD = 5;
 
 const HomePage = () => {
-  const { articles, isLoading, pagination } = useFetchArticles({});
+  const isVisited = useHighlightStore(state => state.isVisited);
+
+  const { articles, isNextLoading, pagination, fetchNextArticles } = useFetchArticles(0);
+
   const { currentIndex, xTransform, yScroll, handlers } = useSwipeGestures({
     itemsLength: articles.length + 1,
-    onItemChange: useCallback((index: number) => postArticleEvent(articles[index]?.id, 'VIEW'), [articles]),
+    onItemChange: useCallback(
+      async (index: number) => {
+        if (articles[index]?.id) postArticleEvent(articles[index].id, 'VIEW');
+        if (articles.length - index <= FETCH_THRESHOLD && !isNextLoading && pagination.hasNext) fetchNextArticles();
+      },
+      [articles, isNextLoading, pagination.hasNext, fetchNextArticles],
+    ),
     onDetailToggle: useCallback(
-      (index: number, isDetail: boolean) => isDetail && postArticleEvent(articles[index]?.id, 'DETAIL_VIEW'),
+      (index: number, isDetail: boolean) =>
+        isDetail && articles[index]?.id && postArticleEvent(articles[index].id, 'DETAIL_VIEW'),
       [articles],
     ),
   });
+
+  useEffect(() => {
+    console.log('isVisited ==> ', isVisited());
+    if (!isVisited()) toast.fiveNews();
+  }, []);
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">
@@ -36,14 +55,14 @@ const HomePage = () => {
           ))}
 
           {/* 로딩 인디케이터 */}
-          {isLoading && (
+          {pagination.hasNext && (
             <div className="flex h-full w-full items-center justify-center">
               <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-white"></div>
             </div>
           )}
 
           {/* 뉴스 모두 확인 */}
-          {!pagination?.hasNext && articles.length > 0 && (
+          {!pagination?.hasNext && (
             <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-center">
               <p className="typography-sub-title">
                 오늘의 뉴스를

@@ -1,5 +1,6 @@
 import { APIResult } from '@/types/dto';
 import { camelize } from '../utils/camelize';
+import { SITEMAP } from '@/data/sitemap';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -107,7 +108,7 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
       const newAccessToken = await refreshAccessToken();
 
       if (!newAccessToken) {
-        if (typeof window !== 'undefined') window.location.href = '/onboarding';
+        if (typeof window !== 'undefined') window.location.href = SITEMAP.ONBOARDING;
         return {
           error: { status: 401, message: 'Authentication failed' },
           data: null,

@@ -1,27 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { allPaths, privatePaths, publicPaths, SITEMAP } from './data/sitemap';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const publicPaths = ['/onboarding', '/sign-in'];
-  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
-  if (isPublicPath) return NextResponse.next();
+  const isPublicPath = publicPaths.some(path => pathname === path);
+  const isPrivatePath = privatePaths.some(path => pathname === path);
 
   const refreshToken = request.cookies.get('refreshToken')?.value;
 
-  if (!refreshToken) return NextResponse.redirect(new URL('/onboarding', request.url));
+  if (isPublicPath && !refreshToken) return NextResponse.next();
+  if (isPublicPath && !!refreshToken) return NextResponse.redirect(new URL(SITEMAP.HOME, request.url));
+
+  if (isPrivatePath && !!refreshToken) return NextResponse.next();
+  if (isPrivatePath && !refreshToken) return NextResponse.redirect(new URL(SITEMAP.ONBOARDING, request.url));
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-     * 다음 경로를 제외한 모든 요청에 대해 실행:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-  ],
+  matcher: allPaths,
 };

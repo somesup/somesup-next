@@ -11,6 +11,7 @@ import { useUserStore } from '@/lib/stores/user';
 import { MdOutlineArrowForwardIos } from 'react-icons/md';
 import SignInInputCode from './sign-in-input-code';
 import { SectionType } from '@/types/types';
+import { SITEMAP } from '@/data/sitemap';
 
 const SignInForm = () => {
   const [formValue, setFormValue] = useState<SignInRequestDto>({ phoneNumber: '', code: '' });
@@ -54,8 +55,8 @@ const SignInForm = () => {
       }, new Map()) as unknown as Record<SectionType, number>;
 
       setUser({ user: data.user, preferences });
-      if (data.isCreated) return router.push('/set-nickname?isCreated=true');
-      else return router.push('/');
+      if (data.isCreated) return router.push(`${SITEMAP.SET_NICKNAME}?isCreated=true`);
+      else return router.push(SITEMAP.HOME);
     }
     if (error.status === 401) return setErrorMessage('인증번호가 일치하지 않습니다');
     if (error.status === 404) return setErrorMessage('인증번호가 만료되었거나 존재하지 않습니다');

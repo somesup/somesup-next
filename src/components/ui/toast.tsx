@@ -7,6 +7,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { MdError } from 'react-icons/md';
 import { Toast, useToastStore } from '@/lib/stores/toast';
 import { GoBookmarkFill } from 'react-icons/go';
+import { SITEMAP } from '@/data/sitemap';
 
 const toastIcon: Record<Toast['type'], ReactNode> = {
   success: <MdError />,
@@ -51,7 +52,7 @@ export const ToastItem = ({ title, description, type, id }: Toast & { id: string
   if (type === 'promo') {
     return (
       <Link
-        href="/highlight"
+        href={SITEMAP.HIGHLIGHT}
         className={[
           'relative flex w-full items-start gap-3 rounded-xl bg-white p-3 text-left',
           'overflow-hidden',

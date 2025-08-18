@@ -11,6 +11,10 @@ const COLLAPSED_SIZE = 24;
 const EXPANDED_SIZE = 60;
 
 const NewsProvider = ({ providers }: NewsProviderProps) => {
+  const uniqueProviders = providers.filter(
+    (provider, index, self) => index === self.findIndex(p => p.id === provider.id),
+  );
+
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -66,7 +70,7 @@ const NewsProvider = ({ providers }: NewsProviderProps) => {
                 maskImage: 'linear-gradient(90deg, transparent 0, #000 8px, #000 calc(100% - 8px), transparent 100%)',
               }}
             >
-              {providers.map(provider => (
+              {uniqueProviders.map(provider => (
                 <div key={provider.id}>
                   <LogoLink provider={provider} size={EXPANDED_SIZE} />
                 </div>
@@ -89,7 +93,7 @@ const NewsProvider = ({ providers }: NewsProviderProps) => {
         style={{ background: 'transparent', padding: 0 }}
       >
         <div className="flex -space-x-3">
-          {providers.slice(0, 3).map(provider => (
+          {uniqueProviders.slice(0, 3).map(provider => (
             <LogoBubble key={provider.id} provider={provider} size={COLLAPSED_SIZE} />
           ))}
         </div>
