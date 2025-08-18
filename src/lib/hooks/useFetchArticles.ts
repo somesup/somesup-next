@@ -6,10 +6,10 @@ import { toast } from '@/components/ui/toast';
 const getCursor = (index: number, prev: boolean, limit: number) => {
   if (prev) {
     const readingIndex = Math.max(index - limit, 0);
-    const cursor = btoa(`{"idx":${readingIndex + 1}}`);
+    const cursor = btoa(`{"idx":${readingIndex}}`);
     return { nextIndex: readingIndex, cursor, limit: Math.min(index - readingIndex, limit), hasPrev: readingIndex > 0 };
   }
-  const cursor = btoa(`{"idx":${index + 1}}`);
+  const cursor = btoa(`{"idx":${index}}`);
   return { nextIndex: index + limit, cursor, limit, hasPrev: index > 0 };
 };
 
