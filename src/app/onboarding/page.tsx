@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const OnboardingPage = () => (
   <main className="relative">
-    <div className="flex h-screen flex-col items-center justify-center gap-16 pb-32 lg:pb-[15%]">
+    <div className="flex h-screen flex-col items-center justify-center gap-14 pb-40">
       <OnboardingCarousel gap={20}>
         {onboardingImages.map(image => (
           <Image key={image.id} className="rounded-lg" src={image.url} alt="Some's up" width={310} height={440} />

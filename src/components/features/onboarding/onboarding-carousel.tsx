@@ -29,7 +29,7 @@ const OnboardingCarousel = ({
   const [isTransitioning, setIsTransitioning] = useState(true);
 
   const containerWidth = useRefWidth(containerRef);
-  const cellWidth = (containerWidth - gap * (itemsPerView - 1)) / itemsPerView;
+  const cellWidth = Math.min((containerWidth - gap * (itemsPerView - 1)) / itemsPerView, 200);
   const centerOffset = (containerWidth - cellWidth) / 2;
   const translateX = centerOffset - currentIndex * (cellWidth + gap);
 

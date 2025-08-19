@@ -107,7 +107,7 @@ const NewsProvider = ({ providers }: NewsProviderProps) => {
 const LogoBubble = ({ provider, size }: LogoProps) => {
   return (
     <div
-      className="inline-block overflow-hidden rounded-full bg-cover bg-center bg-no-repeat"
+      className="inline-block overflow-hidden rounded-full border-2 border-gray-60 bg-gray-60 bg-cover bg-center bg-no-repeat"
       style={{
         backgroundImage: `url(${provider.logoUrl})`,
         width: size,
