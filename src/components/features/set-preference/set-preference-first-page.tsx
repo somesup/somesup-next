@@ -49,7 +49,7 @@ const SetPreferenceFinishPage = ({ onConfirm }: SetPreferenceFinishPageProps) =>
       </div>
       <div className="relative w-full">
         <Button type="submit" className="absolute bottom-4" onClick={handleStartClick}>
-          확인
+          시작하기
         </Button>
       </div>
     </div>
