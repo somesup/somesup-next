@@ -2,6 +2,7 @@
 
 import NewsAbstractView from '@/components/features/news/news-abstract-view';
 import NewsDetailView from '@/components/features/news/news-detail-view';
+import NewsGuide from '@/components/features/news/news-guide';
 import PageSelector from '@/components/ui/page-selector';
 import { toast } from '@/components/ui/toast';
 import { postArticleEvent } from '@/lib/apis/apis';
@@ -9,6 +10,7 @@ import useFetchArticles from '@/lib/hooks/useFetchArticles';
 import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
 import { useCursorStore } from '@/lib/stores/cursor';
 import { useHighlightStore } from '@/lib/stores/highlight';
+import { useNewsGuideStore } from '@/lib/stores/news-guide';
 import Image from 'next/image';
 import { useCallback, useEffect, useRef } from 'react';
 
@@ -18,6 +20,7 @@ const HomePage = () => {
   const isVisited = useHighlightStore(state => state.isVisited);
   const cursor = useCursorStore.getState().cursor;
   const updateCursor = useCursorStore(state => state.updateCursor);
+  const isNewsGuideViewed = useNewsGuideStore(state => state.viewed);
 
   const { articles, isNextLoading, pagination, fetchNextArticles } = useFetchArticles(cursor);
 
@@ -52,6 +55,8 @@ const HomePage = () => {
   return (
     <div className="relative h-screen w-full overflow-hidden bg-black">
       <PageSelector style={{ opacity: xTransform / 100 }} />
+
+      {!isNewsGuideViewed && <NewsGuide />}
 
       {/* 메인 컨테이너 */}
       <div className="relative h-full w-full select-none" {...handlers}>

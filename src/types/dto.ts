@@ -33,12 +33,11 @@ export type NewsDto = {
   id: number;
   section: { id: number; name: string; friendlyName: string };
   providers: NewsProviderDto[];
-  keywords: { id: number; name: string }[];
+  keywords: { id: number; keyword: string }[];
   title: string;
   oneLineSummary: string;
   fullSummary: string;
   language: string;
-  region: null | string;
   thumbnailUrl: string;
   createdAt: string;
   like: { isLiked: boolean; count: number };
