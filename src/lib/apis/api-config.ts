@@ -103,6 +103,7 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
     };
 
     const response = await fetch(API_URL + endpoint, defaultOptions);
+    const xCache = response.headers.get('x-cache');
 
     if (response.status === 401) {
       const newAccessToken = await refreshAccessToken();
@@ -123,6 +124,7 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
       };
 
       const retryResponse = await fetch(API_URL + endpoint, retryOptions);
+      const xCache = response.headers.get('x-cache');
       const retryResult = await retryResponse.json();
 
       if (!retryResponse.ok) {
@@ -132,7 +134,7 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
         };
       }
 
-      return { error: null, data: camelize(retryResult.data), pagination: retryResult.pagination };
+      return { error: null, data: camelize(retryResult.data), pagination: retryResult.pagination, xCache };
     }
 
     const result = await response.json();
@@ -144,7 +146,7 @@ export const myFetch = async <T = any>(endpoint: string, options: RequestInit = 
       };
     }
 
-    return { error: null, data: camelize(result.data), pagination: result.pagination };
+    return { error: null, data: camelize(result.data), pagination: result.pagination, xCache };
   } catch (error) {
     console.error(error);
     return {

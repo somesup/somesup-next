@@ -6,8 +6,8 @@ export type PaginationDto = {
   nextCursor: string | null;
 };
 export type APIResult<T> =
-  | { error: Error; data: null; pagination?: null }
-  | { error: null; data: T; pagination?: PaginationDto };
+  | { error: Error; data: null; pagination?: null; xCache?: null }
+  | { error: null; data: T; pagination?: PaginationDto; xCache?: string | null };
 
 export type PhoneRequestDto = { phoneNumber: string };
 export type SignInRequestDto = PhoneRequestDto & { code: string };

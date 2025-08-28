@@ -2,6 +2,7 @@ import { ArticlesRequestDto, NewsDto } from '@/types/dto';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { getArticles } from '../apis/apis';
 import { toast } from '@/components/ui/toast';
+import { useCursorStore } from '../stores/cursor';
 
 const getCursor = (index: number, prev: boolean, limit: number) => {
   if (prev) {
@@ -13,10 +14,12 @@ const getCursor = (index: number, prev: boolean, limit: number) => {
   return { nextIndex: index + limit, cursor, limit, hasPrev: index > 0 };
 };
 
-const useFetchArticles = (index: number, options?: Omit<ArticlesRequestDto, 'cursor'>) => {
+const useFetchArticles = (index: number, options?: Omit<ArticlesRequestDto, 'cursor'> & { isMain?: boolean }) => {
   const [articles, setArticles] = useState<NewsDto[]>([]);
   const [pagination, setPagination] = useState({ hasPrev: index > 0, hasNext: true });
   const [fetchState, setFetchState] = useState({ start: index, end: index });
+  const setCursor = useCursorStore(state => state.setCursor);
+  const isFirstLoaded = useRef(true);
 
   const limit = options?.limit || 15;
   const optionsRef = useRef(options);
@@ -30,10 +33,12 @@ const useFetchArticles = (index: number, options?: Omit<ArticlesRequestDto, 'cur
 
     try {
       const { cursor } = getCursor(fetchState.end, false, limit);
-      const { error: apiError, data, pagination: newPagination } = await getArticles({ cursor, ...options, limit });
+      const { error, data, pagination: newPagination, xCache } = await getArticles({ cursor, ...options, limit });
+      if (options?.isMain && isFirstLoaded.current && xCache !== 'HIT') setCursor(0);
+      isFirstLoaded.current = false;
 
-      if (apiError?.status === 404) return setPagination(prev => ({ ...prev, hasNext: false })) ?? 0;
-      if (apiError) return toast.serverError() ?? 0;
+      if (error?.status === 404) return setPagination(prev => ({ ...prev, hasNext: false })) ?? 0;
+      if (error) return toast.serverError() ?? 0;
 
       if (newPagination) setPagination(prev => ({ ...prev, ...newPagination }));
       setArticles(prev => [...prev, ...data]);
@@ -54,10 +59,10 @@ const useFetchArticles = (index: number, options?: Omit<ArticlesRequestDto, 'cur
 
     try {
       const { cursor, limit: actualLimit, hasPrev: newHasPrev } = getCursor(fetchState.start, true, limit);
-      const { error: apiError, data } = await getArticles({ cursor, ...options, limit: actualLimit });
+      const { error, data } = await getArticles({ cursor, ...options, limit: actualLimit });
 
-      if (apiError?.status === 404) return setPagination(prev => ({ ...prev, hasPrev: false })) ?? 0;
-      if (apiError) return toast.serverError() ?? 0;
+      if (error?.status === 404) return setPagination(prev => ({ ...prev, hasPrev: false })) ?? 0;
+      if (error) return toast.serverError() ?? 0;
 
       setArticles(prev => [...data, ...prev]);
       setFetchState(prev => ({ ...prev, start: prev.start - data.length }));

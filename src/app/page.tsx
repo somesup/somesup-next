@@ -7,16 +7,19 @@ import { toast } from '@/components/ui/toast';
 import { postArticleEvent } from '@/lib/apis/apis';
 import useFetchArticles from '@/lib/hooks/useFetchArticles';
 import useSwipeGestures from '@/lib/hooks/useSwipeGestures';
+import { useCursorStore } from '@/lib/stores/cursor';
 import { useHighlightStore } from '@/lib/stores/highlight';
 import Image from 'next/image';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 const FETCH_THRESHOLD = 5;
 
 const HomePage = () => {
   const isVisited = useHighlightStore(state => state.isVisited);
+  const cursor = useCursorStore.getState().cursor;
+  const updateCursor = useCursorStore(state => state.updateCursor);
 
-  const { articles, isNextLoading, pagination, fetchNextArticles } = useFetchArticles(0);
+  const { articles, isNextLoading, pagination, fetchNextArticles } = useFetchArticles(cursor);
 
   const { currentIndex, xTransform, yScroll, handlers } = useSwipeGestures({
     itemsLength: articles.length + 1,
@@ -34,8 +37,16 @@ const HomePage = () => {
     ),
   });
 
+  const currentIndexRef = useRef(currentIndex);
+  useEffect(() => {
+    currentIndexRef.current = currentIndex;
+  }, [currentIndex]);
+
   useEffect(() => {
     if (!isVisited()) toast.fiveNews();
+    return () => {
+      updateCursor(prev => prev + currentIndexRef.current);
+    };
   }, []);
 
   return (
