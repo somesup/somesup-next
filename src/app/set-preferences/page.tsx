@@ -28,7 +28,7 @@ const SetPreferencesPage = () => {
     }, [] as UpdatePreferencesRequestDto);
 
     const { error } = await authUpdatePreferences(request);
-    if (!error) return router.push(SITEMAP.HOME);
+    if (!error) return router.replace(SITEMAP.HOME);
     toast.serverError();
   };
 

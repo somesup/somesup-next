@@ -24,7 +24,7 @@ const SetNicknamePage = () => {
     if (!error) {
       updateNickname(nickname);
       const isCreated = searchParams.get('isCreated');
-      return isCreated ? router.push(SITEMAP.SET_PREFERENCES) : router.push(SITEMAP.MY_PAGE);
+      return isCreated ? router.replace(SITEMAP.SET_PREFERENCES) : router.replace(SITEMAP.MY_PAGE);
     }
     toast.serverError();
   };
