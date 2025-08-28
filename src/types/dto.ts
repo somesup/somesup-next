@@ -6,8 +6,8 @@ export type PaginationDto = {
   nextCursor: string | null;
 };
 export type APIResult<T> =
-  | { error: Error; data: null; pagination?: null }
-  | { error: null; data: T; pagination?: PaginationDto };
+  | { error: Error; data: null; pagination?: null; xCache?: null }
+  | { error: null; data: T; pagination?: PaginationDto; xCache?: string | null };
 
 export type PhoneRequestDto = { phoneNumber: string };
 export type SignInRequestDto = PhoneRequestDto & { code: string };
@@ -33,12 +33,11 @@ export type NewsDto = {
   id: number;
   section: { id: number; name: string; friendlyName: string };
   providers: NewsProviderDto[];
-  keywords: { id: number; name: string }[];
+  keywords: { id: number; keyword: string }[];
   title: string;
   oneLineSummary: string;
   fullSummary: string;
   language: string;
-  region: null | string;
   thumbnailUrl: string;
   createdAt: string;
   like: { isLiked: boolean; count: number };

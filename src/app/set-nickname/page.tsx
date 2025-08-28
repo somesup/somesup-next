@@ -5,13 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import SignInInput from '@/components/features/sign-in/sign-in-input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
-import { useUserSESStore, useUserStore } from '@/lib/stores/user';
+import { useUserStore } from '@/lib/stores/user';
 import { authUpdateUser } from '@/lib/apis/apis';
 import { SITEMAP } from '@/data/sitemap';
 
 const SetNicknamePage = () => {
   const searchParams = useSearchParams();
-  const initialNickname = useUserSESStore(state => state.user.nickname);
+  const initialNickname = useUserStore.getState().user.nickname;
   const updateNickname = useUserStore(state => state.setNickname);
   const [nickname, setNickname] = useState(initialNickname);
   const [errorMessage, setErrorMessage] = useState('');
@@ -24,7 +24,7 @@ const SetNicknamePage = () => {
     if (!error) {
       updateNickname(nickname);
       const isCreated = searchParams.get('isCreated');
-      return isCreated ? router.push(SITEMAP.SET_PREFERENCES) : router.push(SITEMAP.MY_PAGE);
+      return isCreated ? router.replace(SITEMAP.SET_PREFERENCES) : router.replace(SITEMAP.MY_PAGE);
     }
     toast.serverError();
   };

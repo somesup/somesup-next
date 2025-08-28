@@ -28,7 +28,7 @@ const SetPreferencesPage = () => {
     }, [] as UpdatePreferencesRequestDto);
 
     const { error } = await authUpdatePreferences(request);
-    if (!error) return router.push(SITEMAP.HOME);
+    if (!error) return router.replace(SITEMAP.HOME);
     toast.serverError();
   };
 
@@ -36,12 +36,7 @@ const SetPreferencesPage = () => {
     <main className="flex h-screen flex-col">
       {step !== 'wait' && (
         <header className="px-8 pt-6">
-          <div className="relative">
-            <button onClick={() => router.back()} className="absolute left-0 top-1/2 -translate-y-1/2">
-              <MdKeyboardArrowLeft size={29} />
-            </button>
-            <h2 className="text-center typography-small-title">맞춤 설정</h2>
-          </div>
+          <h2 className="text-center typography-small-title">맞춤 설정</h2>
         </header>
       )}
       {step === 'first' && <SetPreferenceFirstPage onConfirm={() => setStep('detail')} />}

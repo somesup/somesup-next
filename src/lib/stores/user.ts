@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { useSESStore } from '@/lib/hooks/useSESStore';
 
 import { UserDto } from '@/types/dto';
 import { Expand, SectionPreference, SectionType } from '@/types/types';
@@ -50,5 +49,3 @@ export const useUserStore = create<UserStore>()(
     { name: 'user' },
   ),
 );
-
-export const useUserSESStore = <T>(selector: (state: UserStore) => T) => useSESStore(useUserStore, selector);

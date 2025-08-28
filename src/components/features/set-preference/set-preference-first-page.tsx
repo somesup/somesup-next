@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Hexagon from '@/components/ui/hexagon';
 import { useUserStore } from '@/lib/stores/user';
@@ -18,14 +18,16 @@ const SetPreferenceFinishPage = ({ onConfirm }: SetPreferenceFinishPageProps) =>
   const preferences = useUserStore(state => state.preferences);
   const radii = sectionLabels.map(label => preferences[label] * 30 || 30);
 
-  const handleStartClick = () => {
-    setIsAnimating(true);
-    setWithLabel(false);
+  useEffect(() => {
+    const timeId = setTimeout(() => {
+      setIsAnimating(true);
+      setWithLabel(false);
 
-    setTimeout(() => {
-      onConfirm();
-    }, 600);
-  };
+      setTimeout(() => onConfirm(), 600);
+    }, 500);
+
+    return () => clearTimeout(timeId);
+  }, []);
 
   return (
     <div className="h-full w-full overflow-hidden px-8 py-4">
@@ -46,11 +48,6 @@ const SetPreferenceFinishPage = ({ onConfirm }: SetPreferenceFinishPageProps) =>
             />
           </div>
         </div>
-      </div>
-      <div className="relative w-full">
-        <Button type="submit" className="absolute bottom-4" onClick={handleStartClick}>
-          시작하기
-        </Button>
       </div>
     </div>
   );
